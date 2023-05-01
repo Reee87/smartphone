@@ -11,26 +11,16 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Environment;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-
 
 /**
  * Smart Phone Sensing Example 2. Working with sensors.
@@ -53,18 +43,6 @@ public class MainActivity extends Activity implements SensorEventListener {
      * The wifi info.
      */
     private WifiInfo wifiInfo;
-    /**
-     * Accelerometer x value
-     */
-    private float aX = 0;
-    /**
-     * Accelerometer y value
-     */
-    private float aY = 0;
-    /**
-     * Accelerometer z value
-     */
-    private float aZ = 0;
 
     /**
      * Text fields to show the sensor values.
@@ -77,7 +55,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     ArrayList<float[]> sensorData;
 
     private boolean accIsToggleOn = false;
-    private boolean wifiIsToggleOn = false;
+//    private boolean wifiIsToggleOn = false;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -101,7 +79,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // Set the sensor manager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorData = new ArrayList<float[]>();
+        sensorData = new ArrayList<>();
 
 
         // if the default accelerometer exists
@@ -113,42 +91,36 @@ public class MainActivity extends Activity implements SensorEventListener {
             // the method 'onSensorChanged()' is called.
             sensorManager.registerListener(this, accelerometer,
                     SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            // No accelerometer!
-        }
+        }  // No accelerometer!
+
 
         // Set the wifi manager
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         // Create a click listener for our button.
-        startRssi.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // get the wifi info.
-                wifiInfo = wifiManager.getConnectionInfo();
-                // update the text.
-                textRssi.setText("\n\tSSID = " + wifiInfo.getSSID()
-                        + "\n\tRSSI = " + wifiInfo.getRssi()
-                        + "\n\tLocal Time = " + System.currentTimeMillis());
+        startRssi.setOnClickListener(v -> {
+            // get the wifi info.
+            wifiInfo = wifiManager.getConnectionInfo();
+            // update the text.
+            textRssi.setText("\n\tSSID = " + wifiInfo.getSSID()
+                    + "\n\tRSSI = " + wifiInfo.getRssi()
+                    + "\n\tLocal Time = " + System.currentTimeMillis());
+        });
+
+        startAcc.setOnClickListener(view -> {
+            if (accIsToggleOn) {
+                accIsToggleOn = false;
+                startAcc.setText("START ACC");
+            } else {
+                accIsToggleOn = true;
+                startAcc.setText("STOP ACC");
             }
         });
 
-        startAcc.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (accIsToggleOn) {
-                    accIsToggleOn = false;
-                } else {
-                    accIsToggleOn = true;
-                }
-            }
-        });
-
-        saveToFile.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                accSaveToFile(sensorData, String.valueOf(fileName.getText()));
-            }
+        saveToFile.setOnClickListener(view -> {
+            accSaveToFile(sensorData, String.valueOf(fileName.getText()));
+            fileName.setText("");
+            sensorData.clear();
         });
     }
 
@@ -177,12 +149,12 @@ public class MainActivity extends Activity implements SensorEventListener {
         currentZ.setText("0.0");
 
         // get the the x,y,z values of the accelerometer
-        aX = event.values[0];
-        aY = event.values[1];
-        aZ = event.values[2];
+        float aX = event.values[0];
+        float aY = event.values[1];
+        float aZ = event.values[2];
 
         if (accIsToggleOn) {
-            sensorData.add(event.values);
+            sensorData.add(new float[]{aX, aY, aZ});
         }
         // display the current x,y,z accelerometer values
         currentX.setText(Float.toString(aX));
@@ -200,22 +172,15 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
     }
 
-    private void accSaveToFile( ArrayList<float[]> sensorData, String fileName) {
-//        File path = getApplicationContext().getFilesDir();
-        String path = getApplicationContext().getPackageName();
-
-        File file = new File(path, fileName);
-
-        textRssi.setText(path);
-
+    private void accSaveToFile(ArrayList<float[]> sensorData, String fileName) {
         try {
-//            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
             for (int i = 0; i < sensorData.size(); i++) {
                 String[] arr = {Float.toString(sensorData.get(i)[0]),
                         Float.toString(sensorData.get(i)[1]),
-                        Float.toString(sensorData.get(i)[2])};
+                        Float.toString(sensorData.get(i)[2]),
+                        "\n"};
 
                 String line = String.join(",", arr);
                 outputStreamWriter.write(line);
