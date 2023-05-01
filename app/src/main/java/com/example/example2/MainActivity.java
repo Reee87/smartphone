@@ -1,5 +1,6 @@
 package com.example.example2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -10,10 +11,26 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+
 
 /**
  * Smart Phone Sensing Example 2. Working with sensors.
@@ -54,8 +71,15 @@ public class MainActivity extends Activity implements SensorEventListener {
      */
     private TextView currentX, currentY, currentZ, titleAcc, textRssi;
 
-    Button buttonRssi;
+    Button startRssi, startAcc, saveToFile;
+    TextInputEditText fileName;
 
+    ArrayList<float[]> sensorData;
+
+    private boolean accIsToggleOn = false;
+    private boolean wifiIsToggleOn = false;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,10 +93,16 @@ public class MainActivity extends Activity implements SensorEventListener {
         textRssi = (TextView) findViewById(R.id.textRSSI);
 
         // Create the button
-        buttonRssi = (Button) findViewById(R.id.buttonRSSI);
+        startRssi = (Button) findViewById(R.id.startRSSI);
+        startAcc = (Button) findViewById(R.id.startAcc);
+        saveToFile = (Button) findViewById(R.id.saveToFile);
+
+        fileName = (TextInputEditText) findViewById(R.id.fileName);
 
         // Set the sensor manager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorData = new ArrayList<float[]>();
+
 
         // if the default accelerometer exists
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
@@ -91,7 +121,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         // Create a click listener for our button.
-        buttonRssi.setOnClickListener(new OnClickListener() {
+        startRssi.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // get the wifi info.
@@ -100,6 +130,24 @@ public class MainActivity extends Activity implements SensorEventListener {
                 textRssi.setText("\n\tSSID = " + wifiInfo.getSSID()
                         + "\n\tRSSI = " + wifiInfo.getRssi()
                         + "\n\tLocal Time = " + System.currentTimeMillis());
+            }
+        });
+
+        startAcc.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (accIsToggleOn) {
+                    accIsToggleOn = false;
+                } else {
+                    accIsToggleOn = true;
+                }
+            }
+        });
+
+        saveToFile.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                accSaveToFile(sensorData, String.valueOf(fileName.getText()));
             }
         });
     }
@@ -133,6 +181,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         aY = event.values[1];
         aZ = event.values[2];
 
+        if (accIsToggleOn) {
+            sensorData.add(event.values);
+        }
         // display the current x,y,z accelerometer values
         currentX.setText(Float.toString(aX));
         currentY.setText(Float.toString(aY));
@@ -146,6 +197,33 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
         if ((Math.abs(aZ) > Math.abs(aY)) && (Math.abs(aZ) > Math.abs(aX))) {
             titleAcc.setTextColor(Color.GREEN);
+        }
+    }
+
+    private void accSaveToFile( ArrayList<float[]> sensorData, String fileName) {
+//        File path = getApplicationContext().getFilesDir();
+        String path = getApplicationContext().getPackageName();
+
+        File file = new File(path, fileName);
+
+        textRssi.setText(path);
+
+        try {
+//            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            for (int i = 0; i < sensorData.size(); i++) {
+                String[] arr = {Float.toString(sensorData.get(i)[0]),
+                        Float.toString(sensorData.get(i)[1]),
+                        Float.toString(sensorData.get(i)[2])};
+
+                String line = String.join(",", arr);
+                outputStreamWriter.write(line);
+            }
+            outputStreamWriter.close();
+            Toast.makeText(getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            System.out.println("Error written data in CSV file: " + e.getMessage());
         }
     }
 }
