@@ -53,9 +53,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     TextInputEditText fileName;
 
     ArrayList<float[]> sensorData;
+    ArrayList<Integer> wifiData;
 
     private boolean accIsToggleOn = false;
-//    private boolean wifiIsToggleOn = false;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -80,7 +80,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         // Set the sensor manager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorData = new ArrayList<>();
-
+        wifiData = new ArrayList<>();
 
         // if the default accelerometer exists
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
@@ -93,18 +93,38 @@ public class MainActivity extends Activity implements SensorEventListener {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }  // No accelerometer!
 
-
         // Set the wifi manager
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         // Create a click listener for our button.
-        startRssi.setOnClickListener(v -> {
-            // get the wifi info.
-            wifiInfo = wifiManager.getConnectionInfo();
-            // update the text.
-            textRssi.setText("\n\tSSID = " + wifiInfo.getSSID()
-                    + "\n\tRSSI = " + wifiInfo.getRssi()
-                    + "\n\tLocal Time = " + System.currentTimeMillis());
+//        startRssi.setOnClickListener(v -> {
+//            // get the wifi info.
+//            wifiInfo = wifiManager.getConnectionInfo();
+//            // update the text.
+//            textRssi.setText("\n\tSSID = " + wifiInfo.getSSID()
+//                    + "\n\tRSSI = " + wifiInfo.getRssi()
+//                    + "\n\tLocal Time = " + System.currentTimeMillis());
+//        });
+
+        startRssi.setOnClickListener(view -> {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int duration = 10000; // 10 seconds in milliseconds
+                    int interval = 100; // 100 milliseconds
+
+                    for (int i = 0; i < duration / interval; i++) {
+                        wifiInfo = wifiManager.getConnectionInfo();
+                        wifiData.add(wifiInfo.getRssi());
+
+                        try {
+                            Thread.sleep(interval);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
         });
 
         startAcc.setOnClickListener(view -> {
@@ -118,9 +138,17 @@ public class MainActivity extends Activity implements SensorEventListener {
         });
 
         saveToFile.setOnClickListener(view -> {
-            accSaveToFile(sensorData, String.valueOf(fileName.getText()));
-            fileName.setText("");
-            sensorData.clear();
+            if (wifiData.size() != 0) {
+                wifiSaveToFile(wifiData, String.valueOf(fileName.getText()));
+                fileName.setText("");
+                wifiData.clear();
+            }
+
+            if (sensorData.size() != 0) {
+                accSaveToFile(sensorData, String.valueOf(fileName.getText()));
+                fileName.setText("");
+                sensorData.clear();
+            }
         });
     }
 
@@ -186,6 +214,26 @@ public class MainActivity extends Activity implements SensorEventListener {
                 outputStreamWriter.write(line);
             }
             outputStreamWriter.close();
+            Toast.makeText(getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            System.out.println("Error written data in CSV file: " + e.getMessage());
+        }
+    }
+
+    private void wifiSaveToFile(ArrayList<Integer> wifiData, String fileName) {
+        try {
+            FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+
+            String joinedString = String.join(",", wifiData.toString()
+                    .replace("[", "")
+                    .replace("]", "")
+                    .replace(" ", "")
+                    .split(","));
+
+            outputStreamWriter.write(joinedString);
+            outputStreamWriter.close();
+
             Toast.makeText(getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             System.out.println("Error written data in CSV file: " + e.getMessage());
