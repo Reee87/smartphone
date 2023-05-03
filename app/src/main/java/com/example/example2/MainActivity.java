@@ -12,6 +12,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,15 +48,16 @@ public class MainActivity extends Activity implements SensorEventListener {
     /**
      * Text fields to show the sensor values.
      */
-    private TextView currentX, currentY, currentZ, titleAcc, textRssi;
+    private TextView activity;
+    private LinearLayout C1,C2,C3,C4;
 
-    Button startRssi, startAcc, saveToFile;
-    TextInputEditText fileName;
+    Button start;
 
-    ArrayList<float[]> sensorData;
-    ArrayList<Integer> wifiData;
+    float[] sensorData;
+    Integer wifiData;
 
-    private boolean accIsToggleOn = false;
+    private boolean actIsToggleOn = false;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -64,23 +66,14 @@ public class MainActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.activity_main);
 
         // Create the text views.
-        currentX = (TextView) findViewById(R.id.currentX);
-        currentY = (TextView) findViewById(R.id.currentY);
-        currentZ = (TextView) findViewById(R.id.currentZ);
-        titleAcc = (TextView) findViewById(R.id.titleAcc);
-        textRssi = (TextView) findViewById(R.id.textRSSI);
+        activity = (TextView) findViewById(R.id.textActivity);
 
         // Create the button
-        startRssi = (Button) findViewById(R.id.startRSSI);
-        startAcc = (Button) findViewById(R.id.startAcc);
-        saveToFile = (Button) findViewById(R.id.saveToFile);
-
-        fileName = (TextInputEditText) findViewById(R.id.fileName);
+        start = (Button) findViewById(R.id.start);
 
         // Set the sensor manager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorData = new ArrayList<>();
-        wifiData = new ArrayList<>();
+        sensorData = new float[3];
 
         // if the default accelerometer exists
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
@@ -96,58 +89,13 @@ public class MainActivity extends Activity implements SensorEventListener {
         // Set the wifi manager
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-        // Create a click listener for our button.
-//        startRssi.setOnClickListener(v -> {
-//            // get the wifi info.
-//            wifiInfo = wifiManager.getConnectionInfo();
-//            // update the text.
-//            textRssi.setText("\n\tSSID = " + wifiInfo.getSSID()
-//                    + "\n\tRSSI = " + wifiInfo.getRssi()
-//                    + "\n\tLocal Time = " + System.currentTimeMillis());
-//        });
-
-        startRssi.setOnClickListener(view -> {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    int duration = 10000; // 10 seconds in milliseconds
-                    int interval = 100; // 100 milliseconds
-
-                    for (int i = 0; i < duration / interval; i++) {
-                        wifiInfo = wifiManager.getConnectionInfo();
-                        wifiData.add(wifiInfo.getRssi());
-
-                        try {
-                            Thread.sleep(interval);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }).start();
-        });
-
-        startAcc.setOnClickListener(view -> {
-            if (accIsToggleOn) {
-                accIsToggleOn = false;
-                startAcc.setText("START ACC");
+        start.setOnClickListener(view -> {
+            if (actIsToggleOn) {
+                actIsToggleOn = false;
+                start.setText("START");
             } else {
-                accIsToggleOn = true;
-                startAcc.setText("STOP ACC");
-            }
-        });
-
-        saveToFile.setOnClickListener(view -> {
-            if (wifiData.size() != 0) {
-                wifiSaveToFile(wifiData, String.valueOf(fileName.getText()));
-                fileName.setText("");
-                wifiData.clear();
-            }
-
-            if (sensorData.size() != 0) {
-                accSaveToFile(sensorData, String.valueOf(fileName.getText()));
-                fileName.setText("");
-                sensorData.clear();
+                actIsToggleOn = true;
+                start.setText("STOP");
             }
         });
     }
@@ -172,32 +120,32 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        currentX.setText("0.0");
-        currentY.setText("0.0");
-        currentZ.setText("0.0");
+        // 1 for stand, 2 for walk, 3 for jump
+        int act = 0;
 
         // get the the x,y,z values of the accelerometer
         float aX = event.values[0];
         float aY = event.values[1];
         float aZ = event.values[2];
 
-        if (accIsToggleOn) {
-            sensorData.add(new float[]{aX, aY, aZ});
-        }
-        // display the current x,y,z accelerometer values
-        currentX.setText(Float.toString(aX));
-        currentY.setText(Float.toString(aY));
-        currentZ.setText(Float.toString(aZ));
+        // do classification
 
-        if ((Math.abs(aX) > Math.abs(aY)) && (Math.abs(aX) > Math.abs(aZ))) {
-            titleAcc.setTextColor(Color.RED);
+
+        // show the activity
+        switch(act) {
+            case 1:
+                activity.setText("Stand Still");
+                break;
+            case 2:
+                activity.setText("Walking");
+                break;
+            case 3:
+                activity.setText("Jumping Jacks");
+                break;
+            default:
+                activity.setText("No activity");
         }
-        if ((Math.abs(aY) > Math.abs(aX)) && (Math.abs(aY) > Math.abs(aZ))) {
-            titleAcc.setTextColor(Color.BLUE);
-        }
-        if ((Math.abs(aZ) > Math.abs(aY)) && (Math.abs(aZ) > Math.abs(aX))) {
-            titleAcc.setTextColor(Color.GREEN);
-        }
+
     }
 
     private void accSaveToFile(ArrayList<float[]> sensorData, String fileName) {
