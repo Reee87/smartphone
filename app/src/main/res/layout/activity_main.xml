@@ -13,7 +13,6 @@
         android:id="@+id/titleRSSI"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_gravity="center"
         android:text="Activity"
         android:textSize="20dp" />
 
@@ -21,7 +20,11 @@
         android:id="@+id/textActivity"
         android:layout_width="300dp"
         android:layout_height="100dp"
-        android:text="" />
+        android:layout_gravity="center"
+        android:text=""
+        android:textSize="20dp"
+        android:gravity="center"
+        android:textColor="#0000FF" />
 
     <TextView
         android:id="@+id/titleAcc"
@@ -31,11 +34,11 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="10dp"
         android:text="Localization"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="150dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -62,12 +65,10 @@
                     android:text="C1"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FEFEFE"
-                    app:srcCompat="@android:drawable/ic_menu_myplaces" />
+                <RatingBar
+                    android:id="@+id/ratingBar1"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
 
             </LinearLayout>
 
@@ -88,11 +89,10 @@
                     android:text="C2"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:srcCompat="@android:drawable/ic_menu_myplaces" />
+                <RatingBar
+                    android:id="@+id/ratingBar2"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -112,11 +112,10 @@
                     android:text="C3"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:srcCompat="@android:drawable/ic_menu_myplaces" />
+                <RatingBar
+                    android:id="@+id/ratingBar3"
+                    android:layout_width="48dp"
+                    android:layout_height="42dp" />
 
             </LinearLayout>
 
@@ -137,30 +136,21 @@
                     android:text="C4"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:id="@+id/imageView4"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:srcCompat="@android:drawable/ic_menu_myplaces" />
+                <RatingBar
+                    android:id="@+id/ratingBar4"
+                    android:layout_width="46dp"
+                    android:layout_height="42dp" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="START" />
-
-        </LinearLayout>
-
     </LinearLayout>
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:text="START" />
 
 </LinearLayout>
