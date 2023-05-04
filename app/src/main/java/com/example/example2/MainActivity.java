@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     TextInputEditText fileName;
 
     ArrayList<float[]> sensorData;
-    ArrayList<Integer> wifiData;
+    ArrayList<String[]> wifiData;
 
     private boolean accIsToggleOn = false;
 
@@ -102,6 +102,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 //            wifiInfo = wifiManager.getConnectionInfo();
 //            // update the text.
 //            textRssi.setText("\n\tSSID = " + wifiInfo.getSSID()
+//                    + "\n\tRSSI = " + wifiInfo.getBSSID()
 //                    + "\n\tRSSI = " + wifiInfo.getRssi()
 //                    + "\n\tLocal Time = " + System.currentTimeMillis());
 //        });
@@ -110,12 +111,18 @@ public class MainActivity extends Activity implements SensorEventListener {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    int duration = 10000; // 10 seconds in milliseconds
-                    int interval = 100; // 100 milliseconds
+                    int duration = 30000; // 10 seconds in milliseconds
+                    int interval = 3000; // 1000 milliseconds
+
+                    textRssi.setText("Collecting SSID!");
+                    String[] wifi = new String[2];
 
                     for (int i = 0; i < duration / interval; i++) {
                         wifiInfo = wifiManager.getConnectionInfo();
-                        wifiData.add(wifiInfo.getRssi());
+                        wifi[0] = wifiInfo.getBSSID();
+                        wifi[1] = String.valueOf(wifiInfo.getRssi());
+                        wifiData.add(wifi);
+                        textRssi.setText(Integer.toString(i) + ": " + wifiInfo.getBSSID() + ", " + wifiInfo.getRssi());
 
                         try {
                             Thread.sleep(interval);
@@ -123,6 +130,8 @@ public class MainActivity extends Activity implements SensorEventListener {
                             e.printStackTrace();
                         }
                     }
+
+                    textRssi.setText("Done!");
                 }
             }).start();
         });
@@ -220,18 +229,20 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
     }
 
-    private void wifiSaveToFile(ArrayList<Integer> wifiData, String fileName) {
+    private void wifiSaveToFile(ArrayList<String[]> wifiData, String fileName) {
         try {
             FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
 
-            String joinedString = String.join(",", wifiData.toString()
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replace(" ", "")
-                    .split(","));
+            for (int i = 0; i < wifiData.size(); i++) {
+                String[] arr = new String[3];
+                arr[0] = wifiData.get(i)[0];
+                arr[1] = wifiData.get(i)[1];
+                arr[2] = "\n";
+                String line = String.join(",", arr);
+                outputStreamWriter.write(line);
+            }
 
-            outputStreamWriter.write(joinedString);
             outputStreamWriter.close();
 
             Toast.makeText(getApplicationContext(), "Wrote to file: " + fileName, Toast.LENGTH_SHORT).show();
