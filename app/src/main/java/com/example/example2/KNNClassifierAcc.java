@@ -3,11 +3,11 @@ package com.example.example2;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class KNNClassifier {
+public class KNNClassifierAcc {
     private float[][] feature; // feature vectors
     private int[] label; // class labels
 
-    public KNNClassifier(float[][] X, int[] y) {
+    public KNNClassifierAcc(float[][] X, int[] y) {
         this.feature = X;
         this.label = y;
     }

@@ -12,7 +12,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -53,12 +52,11 @@ public class MainActivity extends Activity implements SensorEventListener {
     RatingBar c1,c2,c3,c4;
 
     float[][] sensorData;
-    int wifiData;
-
     float[][] acc_x;
     int[] acc_y;
 
-    int threads = 0;
+    int[][] wifi_x;
+    int[] wifi_y;
 
     int windowSize = 20;
     int sampleNum = 0;
@@ -81,9 +79,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         c3 = (RatingBar) findViewById(R.id.ratingBar3);
         c4 = (RatingBar) findViewById(R.id.ratingBar4);
 
-//        c1.setRating(10.0f);
-//        c2.setRating(0.0f);
-
         // Set the sensor manager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorData = new float[20][3];
@@ -91,8 +86,14 @@ public class MainActivity extends Activity implements SensorEventListener {
         acc_x = new float[90][3];
         acc_y = new int[90];
 
-        readFromFile(acc_x, acc_y);
-        KNNClassifier knnClassifier = new KNNClassifier(acc_x, acc_y);
+        wifi_x = new int[320][2];
+        wifi_y = new int[320];
+
+        readFromAccFile(acc_x, acc_y);
+        KNNClassifierAcc knnClassifierAcc = new KNNClassifierAcc(acc_x, acc_y);
+
+        readFromWifiFile(wifi_x, wifi_y);
+        KNNClassifierWifi knnClassifierWifi = new KNNClassifierWifi(wifi_x, wifi_y);
 
         // if the default accelerometer exists
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
@@ -109,31 +110,78 @@ public class MainActivity extends Activity implements SensorEventListener {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         start.setOnClickListener(view -> {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    threads = threads + 1;
-                    sampleNum = 0;
-                    while (sampleNum < windowSize - 1) {
-                        activity.setText("Collecting data!");
-                    }
-                    float[] accFeature = new float[3];
-                    extractAccFeature(sensorData, accFeature);
-                    int predict = knnClassifier.predict(accFeature, 5);
-                    activity.setText(Integer.toString(predict));
-                    switch(predict) {
-                        case 0:
-                            activity.setText("Stand Still");
-                            break;
-                        case 1:
-                            activity.setText("Walking");
-                            break;
-                        case 2:
-                            activity.setText("Jumping Jacks");
-                            break;
-                        default:
-                            activity.setText("No activity");
-                    }
+            new Thread(() -> {
+                sampleNum = 0;
+                while (sampleNum < windowSize - 1) {
+                    activity.setText("Collecting data!");
+                }
+                float[] accFeature = new float[3];
+                extractAccFeature(sensorData, accFeature);
+                int predict = knnClassifierAcc.predict(accFeature, 5);
+                switch(predict) {
+                    case 0:
+                        activity.setText("Stand Still");
+                        break;
+                    case 1:
+                        activity.setText("Walking");
+                        break;
+                    case 2:
+                        activity.setText("Jumping Jacks");
+                        break;
+                    default:
+                        activity.setText("No activity");
+                }
+            }).start();
+
+            new Thread(() -> {
+                c1.setRating(0.0f);
+                c2.setRating(0.0f);
+                c3.setRating(0.0f);
+                c4.setRating(0.0f);
+
+                wifiInfo = wifiManager.getConnectionInfo();
+                int[] wifiData = new int[2];
+                int bssid = 0;
+
+                String[] parts = wifiInfo.getBSSID().split(":");
+                for (String part : parts) {
+                    bssid += Integer.parseInt(part, 16);
+                }
+
+                wifiData[0] = bssid;
+                wifiData[1] = wifiInfo.getRssi();
+
+//                 c1
+//                wifiData[0] = 882;
+//                wifiData[1] = -50;
+//
+//                 c2
+//                wifiData[0] = 882;
+//                wifiData[1] = -75;
+//
+//                 c3
+//                wifiData[0] = 968;
+//                wifiData[1] = -47;
+//
+//                 c4
+//                wifiData[0] = 1026;
+//                wifiData[1] = -65;
+
+                int predict = knnClassifierWifi.predict(wifiData, 5);
+                switch(predict) {
+                    case 1:
+                        c1.setRating(10.0f);
+                        break;
+                    case 2:
+                        c2.setRating(10.0f);
+                        break;
+                    case 3:
+                        c3.setRating(10.0f);
+                        break;
+                    case 4:
+                        c4.setRating(10.0f);
+                        break;
+                    default:
                 }
             }).start();
         });
@@ -174,13 +222,25 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     }
 
-    private void readFromFile(float[][] acc_x,int[] acc_y) {
+    private void readFromAccFile(float[][] acc_x, int[] acc_y) {
         String accXFile = "acc_x.csv";
         String accYFile = "acc_y.csv";
 
         try {
             readCsvFileX(accXFile, acc_x);
             readCsvFileY(accYFile,acc_y);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void readFromWifiFile(int[][] wifi_x, int[] wifi_y) {
+        String wifiXFile = "wifi_x.csv";
+        String wifiYFile = "wifi_y.csv";
+
+        try {
+            readCsvFileX(wifiXFile, wifi_x);
+            readCsvFileY(wifiYFile,wifi_y);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -196,7 +256,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         int row = 0;
         while ((line = bufferedReader.readLine()) != null) {
             String[] values = line.split(",");
-            for (int col = 0; col < 3; col++) {
+            for (int col = 0; col < values.length; col++) {
                 acc_x[row][col] = Float.parseFloat(values[col]);
             }
             row++;
@@ -207,7 +267,28 @@ public class MainActivity extends Activity implements SensorEventListener {
         inputStream.close();
     }
 
-    public void readCsvFileY(String file, int[] acc_y) throws IOException {
+    public void readCsvFileX(String file, int[][] wifi_x) throws IOException {
+        AssetManager assetManager = getAssets();
+        InputStream inputStream = assetManager.open(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        String line;
+        int row = 0;
+        while ((line = bufferedReader.readLine()) != null) {
+            String[] values = line.split(",");
+            for (int col = 0; col < values.length; col++) {
+                wifi_x[row][col] = Integer.parseInt(values[col]);
+            }
+            row++;
+        }
+
+        bufferedReader.close();
+        inputStreamReader.close();
+        inputStream.close();
+    }
+
+    public void readCsvFileY(String file, int[] y) throws IOException {
         AssetManager assetManager = getAssets();
         InputStream inputStream = assetManager.open(file);
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -217,7 +298,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         int row = 0;
         while ((line = bufferedReader.readLine()) != null) {
             line = line.replace(",", "");
-            acc_y[row] = Integer.parseInt(line);
+            y[row] = Integer.parseInt(line);
 
             row++;
         }
