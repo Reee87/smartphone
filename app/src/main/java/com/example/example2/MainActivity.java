@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.content.Context;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Smart Phone Sensing Example 2. Working with sensors.
@@ -54,6 +56,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     ArrayList<float[]> sensorData;
     ArrayList<String[]> wifiData;
+    int wifiDataLength = 0;
+    int wifiDataTimes = 0;
 
     private boolean accIsToggleOn = false;
 
@@ -111,18 +115,32 @@ public class MainActivity extends Activity implements SensorEventListener {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    int duration = 30000; // 10 seconds in milliseconds
-                    int interval = 3000; // 1000 milliseconds
+                    int interval = 5000;
+                    int times = 10;
 
-                    textRssi.setText("Collecting SSID!");
-                    String[] wifi = new String[2];
+                    for (int i = 0; i < times; i++) {
+                        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                        wifiManager.startScan();
+                        List<ScanResult> scanResults = wifiManager.getScanResults();
+                        if (wifiDataChange(wifiData, scanResults, wifiDataLength)) {
+                            wifiDataLength = scanResults.size();
+                            wifiDataTimes += 1;
 
-                    for (int i = 0; i < duration / interval; i++) {
-                        wifiInfo = wifiManager.getConnectionInfo();
-                        wifi[0] = wifiInfo.getBSSID();
-                        wifi[1] = String.valueOf(wifiInfo.getRssi());
-                        wifiData.add(wifi);
-                        textRssi.setText(Integer.toString(i) + ": " + wifiInfo.getBSSID() + ", " + wifiInfo.getRssi());
+                            for (ScanResult scanResult : scanResults) {
+//                              textRssi.setText(textRssi.getText() + "\n\tBSSID = "
+//                                + scanResult.BSSID + "    RSSI = "
+//                                + scanResult.level + "dBm");
+                                String[] wifi = new String[2];
+                                wifi[0] = scanResult.BSSID;
+                                wifi[1] = String.valueOf(scanResult.level);
+                                wifiData.add(wifi);
+                            }
+
+                            textRssi.setText("Done!\nTimes = " + wifiDataTimes + "\nTotal wifi data collected = " + wifiData.size());
+                        }
+                        else {
+                            textRssi.setText("Wifi data is the same! Did not record!\nTimes = " + wifiDataTimes + "\nTotal wifi data collected = " + wifiData.size());
+                        }
 
                         try {
                             Thread.sleep(interval);
@@ -130,8 +148,6 @@ public class MainActivity extends Activity implements SensorEventListener {
                             e.printStackTrace();
                         }
                     }
-
-                    textRssi.setText("Done!");
                 }
             }).start();
         });
@@ -159,6 +175,19 @@ public class MainActivity extends Activity implements SensorEventListener {
                 sensorData.clear();
             }
         });
+    }
+
+    private boolean wifiDataChange(ArrayList<String[]> wifiData, List<ScanResult> scanResults, int wifiDataLength) {
+        if (wifiDataLength != scanResults.size()) {
+            return true;
+        }
+        else {
+            if (Integer.parseInt(wifiData.get(wifiData.size() - 1)[1]) != scanResults.get(scanResults.size() - 1).level) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // onResume() registers the accelerometer for listening the events
