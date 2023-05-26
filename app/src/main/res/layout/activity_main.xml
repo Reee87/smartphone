@@ -10,21 +10,9 @@
     android:paddingTop="20dp">
 
     <TextView
-        android:id="@+id/titleRSSI"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:text="Activity"
-        android:textSize="20dp" />
-
-    <TextView
-        android:id="@+id/textActivity"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:text=""
-        android:textSize="20dp"
-        android:gravity="center"
-        android:textColor="#0000FF" />
+        android:id="@+id/debugInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/titleAcc"
@@ -38,7 +26,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
@@ -145,12 +133,324 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="#ffffff"
+            android:gravity="center|top"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/C5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C5"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar5"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C6"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar6"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C7"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C7"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar7"
+                    android:layout_width="48dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C8"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C8"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar8"
+                    android:layout_width="46dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="#ffffff"
+            android:gravity="center|top"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/C9"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C9"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar9"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C10"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C10"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar10"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C11"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C11"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar11"
+                    android:layout_width="48dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C12"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C12"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar12"
+                    android:layout_width="46dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="#ffffff"
+            android:gravity="center|top"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/C13"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C13"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar13"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C14"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C14"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar14"
+                    android:layout_width="49dp"
+                    android:layout_height="42dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C15"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C15"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar15"
+                    android:layout_width="48dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/C16"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="C16"
+                    android:textSize="20sp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar16"
+                    android:layout_width="46dp"
+                    android:layout_height="42dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <Button
         android:id="@+id/start"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
-        android:text="START" />
+        android:text="LOCATE ME" />
 
 </LinearLayout>
