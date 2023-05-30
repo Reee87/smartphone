@@ -58,6 +58,10 @@ public class MainActivity extends Activity implements OnClickListener {
      * The walls.
      */
     private List<ShapeDrawable> walls;
+
+    int dotSize = 10;
+    int startX;
+    int startY;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,24 +86,37 @@ public class MainActivity extends Activity implements OnClickListener {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int width = size.x;
-        int height = size.y;
+        int width = size.x; // width = 720
+        int height = size.y; // height = 1280
 
         // create a drawable object
+        startX = width/2-50;
+        startY = height/2;
+
         drawable = new ShapeDrawable(new OvalShape());
         drawable.getPaint().setColor(Color.BLUE);
-        drawable.setBounds(width/2-20, height/2-20, width/2+20, height/2+20);
+        drawable.setBounds(startX-dotSize/2, startY-dotSize/2, startX+dotSize/2, startY+dotSize/2);
 
         walls = new ArrayList<>();
-        ShapeDrawable d = new ShapeDrawable(new RectShape());
-        d.setBounds(width/2-200, height/2-90, width/2+200, height/2-80);
-        ShapeDrawable d2 = new ShapeDrawable(new RectShape());
-        d2.setBounds(width/2-200, height/2+60, width/2+200, height/2+70);
-        ShapeDrawable d3 = new ShapeDrawable(new RectShape());
-        d3.setBounds(width/2+200, height/2-90, width/2+210, height/2+70);
-        walls.add(d);
-        walls.add(d2);
-        walls.add(d3);
+        // width = 17.97
+        // height = 30.81
+
+        int coefficient = 35;
+
+        GenerateBounds generateBounds = new GenerateBounds(startX, startY, coefficient);
+        ArrayList<int[]> bounds = generateBounds.getBounds();
+
+        for(int[] bound: bounds) {
+            ShapeDrawable d = new ShapeDrawable(new RectShape());
+            d.setBounds(bound[0], bound[1], bound[2], bound[3]);
+            walls.add(d);
+        }
+
+//        textView.setText(
+//                "\tleft = " + left +
+//                "\n\ttop = " + top +
+//                "\n\tright = " + right +
+//                "\n\tbottom = " + bottom);
 
         // create a canvas
         ImageView canvasView = (ImageView) findViewById(R.id.canvas);
@@ -111,6 +128,10 @@ public class MainActivity extends Activity implements OnClickListener {
         drawable.draw(canvas);
         for(ShapeDrawable wall : walls)
             wall.draw(canvas);
+
+//        textView.setText(
+//                "\n\twidth = " +  width +
+//                "\n\theight = " + height);
     }
 
     @Override
@@ -185,7 +206,8 @@ public class MainActivity extends Activity implements OnClickListener {
             display.getSize(size);
             int width = size.x;
             int height = size.y;
-            drawable.setBounds(width/2-20, height/2-20, width/2+20, height/2+20);
+            drawable.setBounds(startX-dotSize/2, startY-dotSize/2, startX+dotSize/2, startY+dotSize/2);
+
         }
 
         // redrawing of the object
