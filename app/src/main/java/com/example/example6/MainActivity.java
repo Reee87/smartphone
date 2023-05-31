@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Region;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
@@ -60,10 +64,15 @@ public class MainActivity extends Activity implements OnClickListener {
      */
     private List<ShapeDrawable> wallsNotBound;
     private List<ShapeDrawable> wallsBound;
+    private ArrayList<Parallelogram> parallelograms;
 
     int dotSize = 10;
+    int lineWidth = 4;
     int startX;
     int startY;
+    // width = 17.97
+    // height = 30.81
+    int coefficient = 35;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,12 +110,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
         wallsNotBound = new ArrayList<>();
         wallsBound = new ArrayList<>();
-        // width = 17.97
-        // height = 30.81
 
-        int coefficient = 35;
-
-        GenerateBounds generateBounds = new GenerateBounds(startX, startY, coefficient);
+        GenerateBounds generateBounds = new GenerateBounds(startX, startY, coefficient, lineWidth);
         ArrayList<Object> bounds = generateBounds.getBounds();
 
         for(Object bound: bounds) {
@@ -131,6 +136,30 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         }
 
+        parallelograms = new ArrayList<>();
+        int topLeftX, topLeftY, bottomLeftX, bottomLeftY;
+
+        // Cell 10
+//        x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
+//        y = startY + (int) (coefficient*(-2.73/2-4.22-3.81));
+        topLeftX = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8+1.24-1.79));
+        topLeftY = startY + (int) (coefficient*(-2.73/2-4.22));
+        bottomLeftX = startX - (int) (1.79*coefficient/2);
+        bottomLeftY = startY - (int) (2.73*coefficient/2);
+        Parallelogram parallelogram1 = new Parallelogram(topLeftX, topLeftY, bottomLeftX, bottomLeftY, (int)(coefficient*1.79), lineWidth);
+        parallelograms.add(parallelogram1);
+
+        // Cell 11
+//        x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
+//        y = startY + (int) (coefficient*(2.73/2+4.22));
+        topLeftX = startX - (int) (1.79*coefficient/2);
+        topLeftY = startY + (int) (2.73*coefficient/2);
+        bottomLeftX = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8+1.24-1.79));
+        bottomLeftY = startY + (int) (coefficient*(2.73/2+4.22));
+        Parallelogram parallelogram2 = new Parallelogram(topLeftX, topLeftY, bottomLeftX, bottomLeftY, (int)(coefficient*1.79), lineWidth);
+        parallelograms.add(parallelogram2);
+
+
 //        textView.setText(
 //                "\tleft = " + left +
 //                "\n\ttop = " + top +
@@ -152,6 +181,11 @@ public class MainActivity extends Activity implements OnClickListener {
         for(ShapeDrawable wall : wallsBound) {
             wall.getPaint().setColor(Color.RED);
             wall.draw(canvas);
+        }
+        for(Parallelogram p : parallelograms) {
+            Paint paint = new Paint();
+            paint.setColor(Color.RED);
+            p.draw(canvas, paint);
         }
 
 
@@ -248,6 +282,11 @@ public class MainActivity extends Activity implements OnClickListener {
             wall.getPaint().setColor(Color.RED);
             wall.draw(canvas);
         }
+        for(Parallelogram p : parallelograms) {
+            Paint paint = new Paint();
+            paint.setColor(Color.RED);
+            p.draw(canvas, paint);
+        }
     }
 
     /**
@@ -257,6 +296,10 @@ public class MainActivity extends Activity implements OnClickListener {
     private boolean isCollision() {
         for(ShapeDrawable wall : wallsBound) {
             if(isCollision(wall,drawable))
+                return true;
+        }
+        for(Parallelogram p : parallelograms) {
+            if(isCollision(p,drawable))
                 return true;
         }
         return false;
@@ -271,5 +314,9 @@ public class MainActivity extends Activity implements OnClickListener {
     private boolean isCollision(ShapeDrawable first, ShapeDrawable second) {
         Rect firstRect = new Rect(first.getBounds());
         return firstRect.intersect(second.getBounds());
+    }
+
+    private boolean isCollision(Parallelogram first, ShapeDrawable second) {
+        return false;
     }
 }

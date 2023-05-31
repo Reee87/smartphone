@@ -1,74 +1,64 @@
 package com.example.example6;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.drawable.shapes.Shape;
+
 import java.util.ArrayList;
 
-public class Parallelogram {
-    int coefficient;
-    int lineWidth;
+public class Parallelogram extends Shape {
+    private final int topLeftX;
+    private final int topLeftY;
+    private final int bottomLeftX;
+    private final int bottomLeftY;
+    private final int width;
+    private final int lineWidth;
+    private ArrayList<Path> path;
 
-    public Parallelogram(int coefficient, int lineWidth) {
-        this.coefficient = coefficient;
+    public Parallelogram(int topLeftX, int topLeftY, int bottomLeftX, int bottomLeftY, int width, int lineWidth) {
+        this.topLeftX = topLeftX;
+        this.topLeftY = topLeftY;
+        this.bottomLeftX = bottomLeftX;
+        this.bottomLeftY = bottomLeftY;
+        this.width = width;
         this.lineWidth = lineWidth;
+        this.path = new ArrayList<>();
     }
 
-    public ArrayList<int[]> generateBound(int x, int y, float width, float height,
-                                          boolean generateTop, boolean generateBottom,
-                                          boolean generateLeft, boolean generateRight) {
-        ArrayList<int[]> bound = new ArrayList<>();
-
-        if (generateTop) bound.add(generateTopBound(x, y, width, height));
-        if (generateBottom) bound.add(generateBottomBound(x, y, width, height));
-        if (generateLeft) bound.add(generateLeftBound(x, y, width, height));
-        if (generateRight) bound.add(generateRightBound(x, y, width, height));
-
-        return bound;
+    @Override
+    public void draw(Canvas canvas, Paint paint) {
+        Path left = drawLeft();
+        Path right = drawRight();
+        canvas.drawPath(left, paint);
+        canvas.drawPath(right, paint);
+        path.add(left);
+        path.add(right);
     }
 
-    private int[] generateTopBound(int x, int y, float width, float height) {
-        int[] rect = new int[4];
+    private Path drawLeft() {
+        Path left = new Path();
+        left.moveTo(topLeftX-lineWidth/2, topLeftY);
+        left.lineTo(bottomLeftX-lineWidth/2, bottomLeftY);
+        left.lineTo(bottomLeftX+lineWidth/2, bottomLeftY);
+        left.lineTo(topLeftX+lineWidth/2, topLeftY);
+        left.close();
 
-        rect[0] = x;
-        rect[1] = y - lineWidth/2;
-        rect[2] = x + (int) (width*coefficient);
-        rect[3] = y + lineWidth/2;
-
-        return rect;
+        return left;
     }
 
-    private int[] generateBottomBound(int x, int y, float width, float height) {
-        y = y + (int) (height*coefficient);
+    private Path drawRight() {
+        Path right = new Path();
+        right.moveTo(topLeftX+width-lineWidth/2, topLeftY);
+        right.lineTo(bottomLeftX+width-lineWidth/2, bottomLeftY);
+        right.lineTo(bottomLeftX+width+lineWidth/2, bottomLeftY);
+        right.lineTo(topLeftX+width+lineWidth/2, topLeftY);
+        right.close();
 
-        int[] rect = new int[4];
-
-        rect[0] = x;
-        rect[1] = y - lineWidth/2;
-        rect[2] = x + (int) (width*coefficient);
-        rect[3] = y + lineWidth/2;
-
-        return rect;
+        return right;
     }
 
-    private int[] generateLeftBound(int x, int y, float width, float height) {
-        int[] rect = new int[4];
-
-        rect[0] = x - lineWidth/2;
-        rect[1] = y;
-        rect[2] = x + lineWidth/2;
-        rect[3] = y + (int) (height*coefficient);
-
-        return rect;
-    }
-
-    private int[] generateRightBound(int x, int y, float width, float height) {
-        x = x + (int) (width*coefficient);
-
-        int[] rect = new int[4];
-
-        rect[0] = x - lineWidth/2;
-        rect[1] = y;
-        rect[2] = x + lineWidth/2;
-        rect[3] = y + (int) (height*coefficient);
-
-        return rect;
+    public ArrayList<Path> getPath() {
+        return path;
     }
 }

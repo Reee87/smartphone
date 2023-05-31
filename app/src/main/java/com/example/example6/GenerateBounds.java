@@ -5,11 +5,12 @@ import java.util.ArrayList;
 public class GenerateBounds {
     ArrayList<Object> bounds;
     int coefficient;
-    int lineWidth = 4;
+    int lineWidth;
 
-    public GenerateBounds(int startX, int startY, int coefficient) {
+    public GenerateBounds(int startX, int startY, int coefficient, int lineWidth) {
         this.bounds = new ArrayList<>();
         this.coefficient = coefficient;
+        this.lineWidth = lineWidth;
 
         Rectangle rectangle = new Rectangle(coefficient, lineWidth);
 
@@ -124,6 +125,15 @@ public class GenerateBounds {
         bounds.addAll(rectangle.generateBound(x, y, (float) 2.30, (float) 4.30,
                 false, true, true, true));
 
+        // Cell 17
+        x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8-(1.79-1.24)));
+        y = startY + (int) (coefficient*(-2.73/2-4.22-3.81));
+        bounds.add(rectangle.generateBottomBound(x, y, (float) (1.79-1.24), (float) 3.81, true));
+
+        // Cell 18
+        x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8-(1.79-1.24)));
+        y = startY + (int) (coefficient*(2.73/2+4.22));
+        bounds.add(rectangle.generateTopBound(x, y, (float) (1.79-1.24), true));
 
     }
 
