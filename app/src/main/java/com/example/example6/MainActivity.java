@@ -295,12 +295,13 @@ public class MainActivity extends Activity implements OnClickListener {
      */
     private boolean isCollision() {
         for(ShapeDrawable wall : wallsBound) {
-            if(isCollision(wall,drawable))
+            if(isCollision(wall, drawable))
                 return true;
         }
         for(Parallelogram p : parallelograms) {
-            if(isCollision(p,drawable))
-                return true;
+            ArrayList<int[]> points = p.getPoints();
+                if(isCollision(points, drawable))
+                    return true;
         }
         return false;
     }
@@ -316,7 +317,14 @@ public class MainActivity extends Activity implements OnClickListener {
         return firstRect.intersect(second.getBounds());
     }
 
-    private boolean isCollision(Parallelogram first, ShapeDrawable second) {
+    private boolean isCollision(ArrayList<int[]> points, ShapeDrawable second) {
+        Rect rect = new Rect(second.getBounds());
+        for (int[] point : points) {
+            if (rect.contains(point[0], point[1])) {
+                return true;
+            }
+        }
+
         return false;
     }
 }

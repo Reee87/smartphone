@@ -3,6 +3,7 @@ package com.example.example6;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.graphics.drawable.shapes.Shape;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class Parallelogram extends Shape {
     private final int width;
     private final int lineWidth;
     private ArrayList<Path> path;
+    private ArrayList<int[]> points;
 
     public Parallelogram(int topLeftX, int topLeftY, int bottomLeftX, int bottomLeftY, int width, int lineWidth) {
         this.topLeftX = topLeftX;
@@ -24,6 +26,7 @@ public class Parallelogram extends Shape {
         this.width = width;
         this.lineWidth = lineWidth;
         this.path = new ArrayList<>();
+        this.points = new ArrayList<>();
     }
 
     @Override
@@ -34,6 +37,10 @@ public class Parallelogram extends Shape {
         canvas.drawPath(right, paint);
         path.add(left);
         path.add(right);
+        ArrayList<int[]> leftPoints = generatePoints(left);
+        ArrayList<int[]> rightPoints = generatePoints(right);
+        points.addAll(leftPoints);
+        points.addAll(rightPoints);
     }
 
     private Path drawLeft() {
@@ -58,7 +65,30 @@ public class Parallelogram extends Shape {
         return right;
     }
 
+    private ArrayList<int[]> generatePoints(Path p) {
+        ArrayList<int[]> points = new ArrayList<>();
+        PathMeasure pathMeasure = new PathMeasure(p, false);
+        float pathLength = pathMeasure.getLength();
+
+        float[] coordinates = new float[2];
+        for (float distance = 0; distance < pathLength; distance += 1) {
+            pathMeasure.getPosTan(distance, coordinates, null);
+            float x = coordinates[0];
+            float y = coordinates[1];
+            int[] point = new int[2];
+            point[0] = (int) x;
+            point[1] = (int) y;
+            points.add(point);
+        }
+
+        return points;
+    }
+
     public ArrayList<Path> getPath() {
         return path;
+    }
+
+    public ArrayList<int[]> getPoints() {
+        return points;
     }
 }
