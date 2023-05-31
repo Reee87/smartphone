@@ -37,13 +37,20 @@ public class GenerateBounds {
         x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
         y = startY + (int) (coefficient*(2.73/2+4.22+3.81));
         bounds.addAll(rectangle.generateBound(x, y, (float) 3.57, (float) 2.75,
-                false, false, true, true));
+                false, false, false, true));
+
+        bounds.add(rectangle.generateTopBound(x+(int)(coefficient*(1.24)), y, (float) (3.57-1.24), true));
+        bounds.add(rectangle.generateLeftBound(x, y, (float) (3.26+2.75-1.56-2.54), true));
 
         // Cell 9
         x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
         y = startY + (int) (coefficient*(-2.73/2-4.22-3.81-2.75));
         bounds.addAll(rectangle.generateBound(x, y, (float) 3.57, (float) 2.75,
-                false, false, true, true));
+                false, false, false, true));
+
+        bounds.add(rectangle.generateLeftBound(x, y+(int) (coefficient*(2.75-(3.26+2.75-1.56-2.54))),
+                (float) (3.26+2.75-1.56-2.54), true));
+        bounds.add(rectangle.generateBottomBound(x+(int)(coefficient*(1.24)), y, (float) (3.57-1.24), (float) 2.75, true));
 
         // Cell 13
         x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
@@ -51,11 +58,15 @@ public class GenerateBounds {
         bounds.addAll(rectangle.generateBound(x, y, (float) 3.57, (float) 3.26,
                 false, true, false, true));
 
+        bounds.add(rectangle.generateLeftBound(x, y+(int)(coefficient*(3.26-1.56)), (float) 1.56, true));
+
         // Cell 8
         x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
         y = startY + (int) (coefficient*(-2.73/2-4.22-3.81-2.75-3.26));
         bounds.addAll(rectangle.generateBound(x, y, (float) 3.57, (float) 3.26,
                 true, false, false, true));
+
+        bounds.add(rectangle.generateLeftBound(x, y, (float) 1.56, true));
 
         // Cell 14
         x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2));
@@ -69,6 +80,10 @@ public class GenerateBounds {
         bounds.addAll(rectangle.generateBound(x, y, (float) 4.80, (float) 2.54,
                 true, false, false, false));
 
+        bounds.add(rectangle.generateBottomBound(x, y, (float) (4.80-0.99)/2, (float) 2.54, true));
+        bounds.add(rectangle.generateBottomBound(x+(int) (coefficient*((4.8-0.99)/2+0.99)), y,
+                (float) (4.80-0.99)/2, (float) 2.54, true));
+
         // Cell 15
         x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2-4.8));
         y = startY + (int) (coefficient*(2.73/2+4.22+3.81+2.75-(2.56-(3.26-1.56))));
@@ -80,6 +95,10 @@ public class GenerateBounds {
         y = startY + (int) (coefficient*(-2.73/2-4.22-3.81-2.75-3.26+1.56));
         bounds.addAll(rectangle.generateBound(x, y, (float) 4.80, (float) 2.54,
                 true, false, false, false));
+
+        bounds.add(rectangle.generateBottomBound(x, y, (float) (4.8-1.01)/2, (float) 2.54, true));
+        bounds.add(rectangle.generateBottomBound(x+(int) (coefficient*((4.8-1.01)/2+1.01)), y,
+                (float) (4.8-1.01)/2, (float) 2.54, true));
 
         // Cell 16
         x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2-4.8*2));
@@ -104,6 +123,8 @@ public class GenerateBounds {
         y = startY + (int) (coefficient*(-2.73/2-4.22-3.81-2.75-3.26+1.56+2.54));
         bounds.addAll(rectangle.generateBound(x, y, (float) 2.30, (float) 4.30,
                 false, true, true, true));
+
+
     }
 
     public ArrayList<Object> getBounds() {

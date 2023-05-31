@@ -145,12 +145,15 @@ public class MainActivity extends Activity implements OnClickListener {
 
         // draw the objects
         drawable.draw(canvas);
-        for(ShapeDrawable wall : wallsBound)
-            wall.draw(canvas);
         for(ShapeDrawable wall : wallsNotBound) {
             wall.getPaint().setColor(Color.BLUE);
             wall.draw(canvas);
         }
+        for(ShapeDrawable wall : wallsBound) {
+            wall.getPaint().setColor(Color.RED);
+            wall.draw(canvas);
+        }
+
 
 //        textView.setText(
 //                "\n\twidth = " +  width +
@@ -237,10 +240,12 @@ public class MainActivity extends Activity implements OnClickListener {
         // redrawing of the object
         canvas.drawColor(Color.WHITE);
         drawable.draw(canvas);
-        for(ShapeDrawable wall : wallsBound)
-            wall.draw(canvas);
         for(ShapeDrawable wall : wallsNotBound) {
             wall.getPaint().setColor(Color.BLUE);
+            wall.draw(canvas);
+        }
+        for(ShapeDrawable wall : wallsBound) {
+            wall.getPaint().setColor(Color.RED);
             wall.draw(canvas);
         }
     }

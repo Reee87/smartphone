@@ -1,8 +1,6 @@
 package com.example.example6;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class Rectangle {
     int coefficient;
@@ -18,30 +16,15 @@ public class Rectangle {
                                                        boolean isBoundLeft, boolean isBoundRight) {
         ArrayList<Object> bound = new ArrayList<>();
 
-        ArrayList<Object> top = new ArrayList<>();
-        top.add(generateTopBound(x, y, width, height));
-        top.add(isBoundTop);
-        bound.add(top);
-
-        ArrayList<Object> bottom = new ArrayList<>();
-        bottom.add(generateBottomBound(x, y, width, height));
-        bottom.add(isBoundBottom);
-        bound.add(bottom);
-
-        ArrayList<Object> left = new ArrayList<>();
-        left.add(generateLeftBound(x, y, width, height));
-        left.add(isBoundLeft);
-        bound.add(left);
-
-        ArrayList<Object> right = new ArrayList<>();
-        right.add(generateRightBound(x, y, width, height));
-        right.add(isBoundRight);
-        bound.add(right);
+        bound.add(generateTopBound(x, y, width, isBoundTop));
+        bound.add(generateBottomBound(x, y, width, height, isBoundBottom));
+        bound.add(generateLeftBound(x, y, height, isBoundLeft));
+        bound.add(generateRightBound(x, y, width, height, isBoundRight));
 
         return bound;
     }
 
-    private int[] generateTopBound(int x, int y, float width, float height) {
+    public ArrayList<Object> generateTopBound(int x, int y, float width, boolean isBoundTop) {
         int[] rect = new int[4];
 
         rect[0] = x;
@@ -49,10 +32,14 @@ public class Rectangle {
         rect[2] = x + (int) (width*coefficient);
         rect[3] = y + lineWidth/2;
 
-        return rect;
+        ArrayList<Object> top = new ArrayList<>();
+        top.add(rect);
+        top.add(isBoundTop);
+
+        return top;
     }
 
-    private int[] generateBottomBound(int x, int y, float width, float height) {
+    public ArrayList<Object> generateBottomBound(int x, int y, float width, float height, boolean isBoundBottom) {
         y = y + (int) (height*coefficient);
 
         int[] rect = new int[4];
@@ -62,10 +49,14 @@ public class Rectangle {
         rect[2] = x + (int) (width*coefficient);
         rect[3] = y + lineWidth/2;
 
-        return rect;
+        ArrayList<Object> bottom = new ArrayList<>();
+        bottom.add(rect);
+        bottom.add(isBoundBottom);
+
+        return bottom;
     }
 
-    private int[] generateLeftBound(int x, int y, float width, float height) {
+    public ArrayList<Object> generateLeftBound(int x, int y, float height, boolean isBoundLeft) {
         int[] rect = new int[4];
 
         rect[0] = x - lineWidth/2;
@@ -73,10 +64,14 @@ public class Rectangle {
         rect[2] = x + lineWidth/2;
         rect[3] = y + (int) (height*coefficient);
 
-        return rect;
+        ArrayList<Object> left = new ArrayList<>();
+        left.add(rect);
+        left.add(isBoundLeft);
+
+        return left;
     }
 
-    private int[] generateRightBound(int x, int y, float width, float height) {
+    public ArrayList generateRightBound(int x, int y, float width, float height, boolean isBoundRight) {
         x = x + (int) (width*coefficient);
 
         int[] rect = new int[4];
@@ -86,6 +81,10 @@ public class Rectangle {
         rect[2] = x + lineWidth/2;
         rect[3] = y + (int) (height*coefficient);
 
-        return rect;
+        ArrayList<Object> right = new ArrayList<>();
+        right.add(rect);
+        right.add(isBoundRight);
+
+        return right;
     }
 }
