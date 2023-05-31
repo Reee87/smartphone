@@ -1,6 +1,8 @@
 package com.example.example6;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Rectangle {
     int coefficient;
@@ -11,15 +13,30 @@ public class Rectangle {
         this.lineWidth = lineWidth;
     }
 
-    public ArrayList<int[]> generateBound(int x, int y, float width, float height,
-                                          boolean generateTop, boolean generateBottom,
-                                          boolean generateLeft, boolean generateRight) {
-        ArrayList<int[]> bound = new ArrayList<>();
+    public ArrayList<Object> generateBound(int x, int y, float width, float height,
+                                                       boolean isBoundTop, boolean isBoundBottom,
+                                                       boolean isBoundLeft, boolean isBoundRight) {
+        ArrayList<Object> bound = new ArrayList<>();
 
-        if (generateTop) bound.add(generateTopBound(x, y, width, height));
-        if (generateBottom) bound.add(generateBottomBound(x, y, width, height));
-        if (generateLeft) bound.add(generateLeftBound(x, y, width, height));
-        if (generateRight) bound.add(generateRightBound(x, y, width, height));
+        ArrayList<Object> top = new ArrayList<>();
+        top.add(generateTopBound(x, y, width, height));
+        top.add(isBoundTop);
+        bound.add(top);
+
+        ArrayList<Object> bottom = new ArrayList<>();
+        bottom.add(generateBottomBound(x, y, width, height));
+        bottom.add(isBoundBottom);
+        bound.add(bottom);
+
+        ArrayList<Object> left = new ArrayList<>();
+        left.add(generateLeftBound(x, y, width, height));
+        left.add(isBoundLeft);
+        bound.add(left);
+
+        ArrayList<Object> right = new ArrayList<>();
+        right.add(generateRightBound(x, y, width, height));
+        right.add(isBoundRight);
+        bound.add(right);
 
         return bound;
     }

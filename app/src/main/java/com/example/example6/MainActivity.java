@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Smart Phone Sensing Example 6. Object movement and interaction on canvas.
@@ -57,7 +58,8 @@ public class MainActivity extends Activity implements OnClickListener {
     /**
      * The walls.
      */
-    private List<ShapeDrawable> walls;
+    private List<ShapeDrawable> wallsNotBound;
+    private List<ShapeDrawable> wallsBound;
 
     int dotSize = 10;
     int startX;
@@ -97,19 +99,36 @@ public class MainActivity extends Activity implements OnClickListener {
         drawable.getPaint().setColor(Color.BLUE);
         drawable.setBounds(startX-dotSize/2, startY-dotSize/2, startX+dotSize/2, startY+dotSize/2);
 
-        walls = new ArrayList<>();
+        wallsNotBound = new ArrayList<>();
+        wallsBound = new ArrayList<>();
         // width = 17.97
         // height = 30.81
 
         int coefficient = 35;
 
         GenerateBounds generateBounds = new GenerateBounds(startX, startY, coefficient);
-        ArrayList<int[]> bounds = generateBounds.getBounds();
+        ArrayList<Object> bounds = generateBounds.getBounds();
 
-        for(int[] bound: bounds) {
-            ShapeDrawable d = new ShapeDrawable(new RectShape());
-            d.setBounds(bound[0], bound[1], bound[2], bound[3]);
-            walls.add(d);
+        for(Object bound: bounds) {
+            if (bound instanceof ArrayList) {
+                ArrayList<Object> b = (ArrayList<Object>) bound;
+                if (b.get(0) instanceof int[]) {
+                    int[] bArray = (int[]) b.get(0);
+
+                    if (b.get(1) instanceof Boolean) {
+                        Boolean isBound = (Boolean) b.get(1);
+
+                        ShapeDrawable d = new ShapeDrawable(new RectShape());
+                        d.setBounds(bArray[0], bArray[1], bArray[2], bArray[3]);
+                        if(isBound) {
+                            wallsBound.add(d);
+                        }
+                        else {
+                            wallsNotBound.add(d);
+                        }
+                    }
+                }
+            }
         }
 
 //        textView.setText(
@@ -126,8 +145,12 @@ public class MainActivity extends Activity implements OnClickListener {
 
         // draw the objects
         drawable.draw(canvas);
-        for(ShapeDrawable wall : walls)
+        for(ShapeDrawable wall : wallsBound)
             wall.draw(canvas);
+        for(ShapeDrawable wall : wallsNotBound) {
+            wall.getPaint().setColor(Color.BLUE);
+            wall.draw(canvas);
+        }
 
 //        textView.setText(
 //                "\n\twidth = " +  width +
@@ -160,12 +183,13 @@ public class MainActivity extends Activity implements OnClickListener {
         // - The text in the center of the buttons
         // - The margins
         // - The text that shows the margin
+        int stepLength = 10;
         switch (v.getId()) {
             // UP BUTTON
             case R.id.button1: {
                 Toast.makeText(getApplication(), "UP", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left,r.top-20,r.right,r.bottom-20);
+                drawable.setBounds(r.left,r.top-stepLength/2,r.right,r.bottom-stepLength/2);
                 textView.setText("\n\tMove Up" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
                 break;
@@ -174,7 +198,7 @@ public class MainActivity extends Activity implements OnClickListener {
             case R.id.button4: {
                 Toast.makeText(getApplication(), "DOWN", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left,r.top+20,r.right,r.bottom+20);
+                drawable.setBounds(r.left,r.top+stepLength/2,r.right,r.bottom+stepLength/2);
                 textView.setText("\n\tMove Down" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
                 break;
@@ -183,7 +207,7 @@ public class MainActivity extends Activity implements OnClickListener {
             case R.id.button2: {
                 Toast.makeText(getApplication(), "LEFT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left-20,r.top,r.right-20,r.bottom);
+                drawable.setBounds(r.left-stepLength/2,r.top,r.right-stepLength/2,r.bottom);
                 textView.setText("\n\tMove Left" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
                 break;
@@ -192,7 +216,7 @@ public class MainActivity extends Activity implements OnClickListener {
             case R.id.button3: {
                 Toast.makeText(getApplication(), "RIGHT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left+20,r.top,r.right+20,r.bottom);
+                drawable.setBounds(r.left+stepLength/2,r.top,r.right+stepLength/2,r.bottom);
                 textView.setText("\n\tMove Right" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
                 break;
@@ -213,8 +237,12 @@ public class MainActivity extends Activity implements OnClickListener {
         // redrawing of the object
         canvas.drawColor(Color.WHITE);
         drawable.draw(canvas);
-        for(ShapeDrawable wall : walls)
+        for(ShapeDrawable wall : wallsBound)
             wall.draw(canvas);
+        for(ShapeDrawable wall : wallsNotBound) {
+            wall.getPaint().setColor(Color.BLUE);
+            wall.draw(canvas);
+        }
     }
 
     /**
@@ -222,7 +250,7 @@ public class MainActivity extends Activity implements OnClickListener {
      * @return True if that's true, false otherwise.
      */
     private boolean isCollision() {
-        for(ShapeDrawable wall : walls) {
+        for(ShapeDrawable wall : wallsBound) {
             if(isCollision(wall,drawable))
                 return true;
         }
