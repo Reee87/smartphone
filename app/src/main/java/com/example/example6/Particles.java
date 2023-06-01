@@ -1,20 +1,23 @@
 package com.example.example6;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Particles {
     private ArrayList<Particle> particles;
     private int length;
-    private float density = 0.1F;
+    private float density = 0.05F;
     private int coefficient;
     private int startX;
     private int startY;
+    int lineWidth;
 
-    public Particles(int startX, int startY, int coefficient) {
+    public Particles(int startX, int startY, int coefficient, int lineWidth) {
         this.particles = new ArrayList<>();
         this.coefficient = coefficient;
         this.startX = startX;
         this.startY = startY;
+        this.lineWidth = lineWidth;
         initialize();
     }
 
@@ -148,7 +151,6 @@ public class Particles {
 
     private ArrayList<Particle> generateParticles(int x, int y, int width, int height) {
         ArrayList<Particle> particles1 = new ArrayList<>();
-        int lineWidth = 4;
         int margin = lineWidth/2+1;
 
         for (int i=x+margin; i<x+width-margin; i+=(int)(1/density)) {
@@ -195,16 +197,18 @@ public class Particles {
         return particles1;
     }
 
-    public void move(float distance, float direction) {
+    public void move(int distance, int direction) {
         for (Particle particle : particles) {
-            particle.updateCoordinates(distance, direction, coefficient);
+            particle.updateCoordinates(distance, direction);
         }
     }
 
     public void resample() {
-        for (Particle particle : particles) {
+        Iterator<Particle> iterator = particles.iterator();
+        while (iterator.hasNext()) {
+            Particle particle = iterator.next();
             if (particle.isDead()) {
-                particles.remove(particle);
+                iterator.remove();
             }
         }
 

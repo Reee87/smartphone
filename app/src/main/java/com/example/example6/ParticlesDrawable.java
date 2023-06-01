@@ -14,9 +14,9 @@ public class ParticlesDrawable {
     private Particles particles;
     private int dotSize;
 
-    public ParticlesDrawable(int dotSize, int coefficient, int startX, int startY) {
+    public ParticlesDrawable(int dotSize, int coefficient, int startX, int startY, int lineWidth) {
         this.dotSize = dotSize;
-        this.particles = new Particles(startX, startY, coefficient);
+        this.particles = new Particles(startX, startY, coefficient, lineWidth);
         initialize();
     }
 
@@ -36,11 +36,12 @@ public class ParticlesDrawable {
 
     public void draw(Canvas canvas) {
         for (ShapeDrawable shapeDrawable : particlesDrawable) {
+            shapeDrawable.getPaint().setColor(Color.YELLOW);
             shapeDrawable.draw(canvas);
         }
     }
 
-    public void move(float distance, float direction) {
+    public void move(int distance, int direction) {
         particles.move(distance, direction);
         synchronize();
     }

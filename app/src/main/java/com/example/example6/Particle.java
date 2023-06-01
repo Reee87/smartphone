@@ -10,12 +10,12 @@ public class Particle {
         this.y = y;
     }
 
-    public void updateCoordinates(float distance, float direction, int coefficient) {
+    public void updateCoordinates(int distance, int direction) {
         double radians = Math.toRadians(direction);
         double sinValue = Math.sin(radians);
         double cosValue = Math.cos(radians);
-        x += (int) (coefficient * distance * cosValue);
-        y -= (int) (coefficient * distance * sinValue);
+        x += (int) (distance * cosValue);
+        y -= (int) (distance * sinValue);
     }
 
     public int getX() {

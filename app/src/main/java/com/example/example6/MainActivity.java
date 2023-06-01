@@ -62,9 +62,11 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private List<ShapeDrawable> wallsNotBound;
     private List<ShapeDrawable> wallsBound;
     private ArrayList<Parallelogram> parallelograms;
+    private ParticlesDrawable particlesDrawable;
 
     private int dotSize = 10;
-    private int lineWidth = 4;
+    private int lineWidth = 10;
+    int stepLength = 10;
     private int startX;
     private int startY;
     // width = 17.97
@@ -173,7 +175,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             p.draw(canvas, paint);
         }
 
-        ParticlesDrawable particlesDrawable = new ParticlesDrawable(2, coefficient, startX, startY);
+        particlesDrawable = new ParticlesDrawable(dotSize, coefficient, startX, startY, lineWidth);
         particlesDrawable.draw(canvas);
     }
 
@@ -203,13 +205,15 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         // - The text in the center of the buttons
         // - The margins
         // - The text that shows the margin
-        int stepLength = 10;
         switch (v.getId()) {
             // UP BUTTON
             case R.id.button1: {
                 Toast.makeText(getApplication(), "UP", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left,r.top-stepLength/2,r.right,r.bottom-stepLength/2);
+
+                particlesDrawable.move(stepLength, 90);
+
                 textView.setText("\n\tMove Up" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
                 break;
@@ -219,6 +223,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 Toast.makeText(getApplication(), "DOWN", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left,r.top+stepLength/2,r.right,r.bottom+stepLength/2);
+
+                particlesDrawable.move(stepLength, 270);
+
                 textView.setText("\n\tMove Down" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
                 break;
@@ -228,6 +235,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 Toast.makeText(getApplication(), "LEFT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left-stepLength/2,r.top,r.right-stepLength/2,r.bottom);
+
+                particlesDrawable.move(stepLength, 180);
+
                 textView.setText("\n\tMove Left" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
                 break;
@@ -237,6 +247,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 Toast.makeText(getApplication(), "RIGHT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left+stepLength/2,r.top,r.right+stepLength/2,r.bottom);
+
+                particlesDrawable.move(stepLength, 0);
+
                 textView.setText("\n\tMove Right" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
                 break;
@@ -254,6 +267,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         }
 
+        particlesDrawable.checkCollision(wallsBound, parallelograms);
+        particlesDrawable.resample();
+
         // redrawing of the object
         canvas.drawColor(Color.WHITE);
         drawable.draw(canvas);
@@ -270,6 +286,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             paint.setColor(Color.RED);
             p.draw(canvas, paint);
         }
+        particlesDrawable.draw(canvas);
     }
 
     /**
