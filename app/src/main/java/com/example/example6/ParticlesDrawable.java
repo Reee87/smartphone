@@ -110,26 +110,26 @@ public class ParticlesDrawable {
     }
 
     private boolean isCollision(ShapeDrawable drawable) {
-//        for(ShapeDrawable wall : wallsBound) {
-//            if(isCollision(wall, drawable))
-//                return true;
-//        }
         for(Rect wall : wallsBoundRect) {
-            if(isCollision(wall, drawable))
+            if(isCollision(new Rect(wall.left, wall.top, wall.right, wall.bottom), drawable))
                 return true;
         }
+
         for(Parallelogram p : parallelograms) {
             ArrayList<int[]> points = p.getPoints();
             if(isCollision(points, drawable))
                 return true;
         }
+
+        for(int i=0; i<2; i++) {
+            Rect rect = parallelogramsRect.get(i);
+            if (isCollision(new Rect(rect.left, rect.top, rect.right, rect.bottom), drawable))
+                if(isCollision(parallelograms.get(i).getPoints(), drawable))
+                    return true;
+        }
+
         return false;
     }
-
-//    private boolean isCollision(ShapeDrawable first, ShapeDrawable second) {
-//        Rect firstRect = new Rect(first.getBounds());
-//        return firstRect.intersect(second.getBounds());
-//    }
 
     private boolean isCollision(ArrayList<int[]> points, ShapeDrawable second) {
         Rect rect = new Rect(second.getBounds());
@@ -142,32 +142,7 @@ public class ParticlesDrawable {
         return false;
     }
 
-//    private boolean isCollision(ShapeDrawable drawable) {
-//        for(Rect wall : wallsBoundRect) {
-//            if(isCollision(wall, drawable))
-//                return true;
-//        }
-//
-//        for(int i=0; i<2; i++) {
-//            if (isCollision(parallelogramsRect.get(i), drawable))
-//                if(isCollision(parallelograms.get(i).getPoints(), drawable))
-//                    return true;
-//        }
-//        return false;
-//    }
-//
     private boolean isCollision(Rect first, ShapeDrawable second) {
         return first.intersect(second.getBounds());
     }
-//
-//    private boolean isCollision(ArrayList<int[]> points, ShapeDrawable second) {
-//        Rect rect = new Rect(second.getBounds());
-//        for (int[] point : points) {
-//            if (rect.contains(point[0], point[1])) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
 }
