@@ -1,5 +1,7 @@
 package com.example.example6;
 
+import androidx.annotation.NonNull;
+
 public class Particle {
     private int x;
     private int y;
@@ -10,12 +12,9 @@ public class Particle {
         this.y = y;
     }
 
-    public void updateCoordinates(int distance, int direction) {
-        double radians = Math.toRadians(direction);
-        double sinValue = Math.sin(radians);
-        double cosValue = Math.cos(radians);
-        x += (int) (distance * cosValue);
-        y -= (int) (distance * sinValue);
+    public void updateCoordinates(int[] delta) {
+        x += delta[0];
+        y += delta[1];
     }
 
     public int getX() {

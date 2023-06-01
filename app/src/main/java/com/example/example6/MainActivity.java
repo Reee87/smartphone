@@ -64,8 +64,8 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private ArrayList<Parallelogram> parallelograms;
     private ParticlesDrawable particlesDrawable;
 
-    private int dotSize = 10;
-    private int lineWidth = 10;
+    private int dotSize = 4;
+    private int lineWidth = 4;
     int stepLength = 10;
     private int startX;
     private int startY;
@@ -212,7 +212,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left,r.top-stepLength/2,r.right,r.bottom-stepLength/2);
 
-                particlesDrawable.move(stepLength, 90);
+                particlesDrawable.move(stepLength/2, 90);
 
                 textView.setText("\n\tMove Up" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
@@ -224,7 +224,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left,r.top+stepLength/2,r.right,r.bottom+stepLength/2);
 
-                particlesDrawable.move(stepLength, 270);
+                particlesDrawable.move(stepLength/2, 270);
 
                 textView.setText("\n\tMove Down" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
@@ -236,7 +236,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left-stepLength/2,r.top,r.right-stepLength/2,r.bottom);
 
-                particlesDrawable.move(stepLength, 180);
+                particlesDrawable.move(stepLength/2, 180);
 
                 textView.setText("\n\tMove Left" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
@@ -248,7 +248,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left+stepLength/2,r.top,r.right+stepLength/2,r.bottom);
 
-                particlesDrawable.move(stepLength, 0);
+                particlesDrawable.move(stepLength/2, 0);
 
                 textView.setText("\n\tMove Right" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
@@ -272,7 +272,6 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         // redrawing of the object
         canvas.drawColor(Color.WHITE);
-        drawable.draw(canvas);
         for(ShapeDrawable wall : wallsNotBound) {
             wall.getPaint().setColor(Color.BLUE);
             wall.draw(canvas);
@@ -287,6 +286,8 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             p.draw(canvas, paint);
         }
         particlesDrawable.draw(canvas);
+        drawable.draw(canvas);
+
     }
 
     /**

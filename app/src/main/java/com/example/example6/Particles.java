@@ -1,12 +1,13 @@
 package com.example.example6;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class Particles {
     private ArrayList<Particle> particles;
     private int length;
-    private float density = 0.05F;
+    private float density = 0.1F;
     private int coefficient;
     private int startX;
     private int startY;
@@ -198,9 +199,21 @@ public class Particles {
     }
 
     public void move(int distance, int direction) {
+        int[] delta = updateCoordinates(distance, direction);
         for (Particle particle : particles) {
-            particle.updateCoordinates(distance, direction);
+            particle.updateCoordinates(delta);
         }
+    }
+
+    private int[] updateCoordinates(int distance, int direction) {
+        int[] delta = new int[2];
+        double radians = Math.toRadians(direction);
+        double sinValue = Math.sin(radians);
+        double cosValue = Math.cos(radians);
+        delta[0] = (int) (distance * cosValue);
+        delta[1] = - (int) (distance * sinValue);
+
+        return delta;
     }
 
     public void resample() {
@@ -212,15 +225,23 @@ public class Particles {
             }
         }
 
-        int currentLength = particles.size();
-        for (int i=0; i<length/currentLength-1; i++) {
-            ArrayList<Particle> particles1 = (ArrayList<Particle>) particles.clone();
-            particles.addAll(particles1);
-        }
-        ArrayList<Particle> particles1 = (ArrayList<Particle>) particles.clone();
-        for (int i=0; i<length-(length/currentLength)*currentLength; i++) {
-            particles.add(particles1.get(i));
-        }
+//        int currentLength = particles.size();
+//        ArrayList<Particle> particles1 = (ArrayList<Particle>) particles.clone();
+//
+//        for (int i=0; i<length/currentLength-1; i++) {
+//            particles.addAll(particles1);
+//        }
+//
+//        currentLength = particles.size();
+//        Iterator<Particle> it = particles1.iterator();
+//        int i=0;
+//
+//        while (it.hasNext() && i<length-currentLength) {
+//            Particle particle = it.next();
+//            Particle particle1 = new Particle(particle.getX(), particle.getY());
+//            particles.add(particle1);
+//            i++;
+//        }
     }
 
     public ArrayList<Particle> getParticles() {
