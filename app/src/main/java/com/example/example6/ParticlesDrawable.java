@@ -3,6 +3,7 @@ package com.example.example6;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 
@@ -13,6 +14,10 @@ public class ParticlesDrawable {
     private ArrayList<ShapeDrawable> particlesDrawable;
     private Particles particles;
     private int dotSize;
+    private List<ShapeDrawable> wallsBound;
+    private ArrayList<Parallelogram> parallelograms;
+    private List<Rect> wallsBoundRect;
+    private List<Rect> parallelogramsRect;
 
     public ParticlesDrawable(int dotSize, int coefficient, int startX, int startY, int lineWidth) {
         this.dotSize = dotSize;
@@ -45,9 +50,9 @@ public class ParticlesDrawable {
         particles.move(distance, direction);
     }
 
-    public void checkCollision(List<ShapeDrawable> wallsBound, ArrayList<Parallelogram> parallelograms) {
+    public void checkCollision() {
         for (int i=0; i<particlesDrawable.size(); i++) {
-            if (isCollision(wallsBound, parallelograms, particlesDrawable.get(i))) {
+            if (isCollision(particlesDrawable.get(i))) {
                 particles.setDead(i);
             }
         }
@@ -80,8 +85,36 @@ public class ParticlesDrawable {
         }
     }
 
-    private boolean isCollision(List<ShapeDrawable> wallsBound, ArrayList<Parallelogram> parallelograms, ShapeDrawable drawable) {
-        for(ShapeDrawable wall : wallsBound) {
+    public void setBounds(List<ShapeDrawable> wallsBound, ArrayList<Parallelogram> parallelograms) {
+        this.wallsBound = wallsBound;
+        this.parallelograms = parallelograms;
+        convertToRect(wallsBound);
+    }
+
+    private void convertToRect(List<ShapeDrawable> wallsBound) {
+        this.wallsBoundRect = new ArrayList<>();
+        this.parallelogramsRect = new ArrayList<>();
+
+        for (ShapeDrawable wall : wallsBound) {
+            Rect rect = new Rect(wall.getBounds());
+            wallsBoundRect.add(rect);
+        }
+
+        for(Parallelogram p : parallelograms) {
+            RectF rectF = new RectF();
+            p.getPath().get(0).computeBounds(rectF, true);
+            Rect rect = new Rect();
+            rectF.roundOut(rect);
+            parallelogramsRect.add(rect);
+        }
+    }
+
+    private boolean isCollision(ShapeDrawable drawable) {
+//        for(ShapeDrawable wall : wallsBound) {
+//            if(isCollision(wall, drawable))
+//                return true;
+//        }
+        for(Rect wall : wallsBoundRect) {
             if(isCollision(wall, drawable))
                 return true;
         }
@@ -93,10 +126,10 @@ public class ParticlesDrawable {
         return false;
     }
 
-    private boolean isCollision(ShapeDrawable first, ShapeDrawable second) {
-        Rect firstRect = new Rect(first.getBounds());
-        return firstRect.intersect(second.getBounds());
-    }
+//    private boolean isCollision(ShapeDrawable first, ShapeDrawable second) {
+//        Rect firstRect = new Rect(first.getBounds());
+//        return firstRect.intersect(second.getBounds());
+//    }
 
     private boolean isCollision(ArrayList<int[]> points, ShapeDrawable second) {
         Rect rect = new Rect(second.getBounds());
@@ -108,4 +141,33 @@ public class ParticlesDrawable {
 
         return false;
     }
+
+//    private boolean isCollision(ShapeDrawable drawable) {
+//        for(Rect wall : wallsBoundRect) {
+//            if(isCollision(wall, drawable))
+//                return true;
+//        }
+//
+//        for(int i=0; i<2; i++) {
+//            if (isCollision(parallelogramsRect.get(i), drawable))
+//                if(isCollision(parallelograms.get(i).getPoints(), drawable))
+//                    return true;
+//        }
+//        return false;
+//    }
+//
+    private boolean isCollision(Rect first, ShapeDrawable second) {
+        return first.intersect(second.getBounds());
+    }
+//
+//    private boolean isCollision(ArrayList<int[]> points, ShapeDrawable second) {
+//        Rect rect = new Rect(second.getBounds());
+//        for (int[] point : points) {
+//            if (rect.contains(point[0], point[1])) {
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 }

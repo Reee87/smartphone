@@ -64,9 +64,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private ArrayList<Parallelogram> parallelograms;
     private ParticlesDrawable particlesDrawable;
 
-    private int dotSize = 4;
+    private int dotSize = 6;
     private int lineWidth = 4;
-    int stepLength = 10;
+    int stepLength = 5;
     private int startX;
     private int startY;
     // width = 17.97
@@ -177,6 +177,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         particlesDrawable = new ParticlesDrawable(dotSize, coefficient, startX, startY, lineWidth);
         particlesDrawable.draw(canvas);
+        particlesDrawable.setBounds(wallsBound, parallelograms);
     }
 
     @Override
@@ -210,9 +211,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             case R.id.button1: {
                 Toast.makeText(getApplication(), "UP", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left,r.top-stepLength/2,r.right,r.bottom-stepLength/2);
+                drawable.setBounds(r.left,r.top-stepLength,r.right,r.bottom-stepLength);
 
-                particlesDrawable.move(stepLength/2, 90);
+                particlesDrawable.move(stepLength, 90);
 
                 textView.setText("\n\tMove Up" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
@@ -222,9 +223,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             case R.id.button4: {
                 Toast.makeText(getApplication(), "DOWN", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left,r.top+stepLength/2,r.right,r.bottom+stepLength/2);
+                drawable.setBounds(r.left,r.top+stepLength,r.right,r.bottom+stepLength);
 
-                particlesDrawable.move(stepLength/2, 270);
+                particlesDrawable.move(stepLength, 270);
 
                 textView.setText("\n\tMove Down" + "\n\tTop Margin = "
                         + drawable.getBounds().top);
@@ -234,9 +235,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             case R.id.button2: {
                 Toast.makeText(getApplication(), "LEFT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left-stepLength/2,r.top,r.right-stepLength/2,r.bottom);
+                drawable.setBounds(r.left-stepLength,r.top,r.right-stepLength,r.bottom);
 
-                particlesDrawable.move(stepLength/2, 180);
+                particlesDrawable.move(stepLength, 180);
 
                 textView.setText("\n\tMove Left" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
@@ -246,9 +247,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             case R.id.button3: {
                 Toast.makeText(getApplication(), "RIGHT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
-                drawable.setBounds(r.left+stepLength/2,r.top,r.right+stepLength/2,r.bottom);
+                drawable.setBounds(r.left+stepLength,r.top,r.right+stepLength,r.bottom);
 
-                particlesDrawable.move(stepLength/2, 0);
+                particlesDrawable.move(stepLength, 0);
 
                 textView.setText("\n\tMove Right" + "\n\tLeft Margin = "
                         + drawable.getBounds().left);
@@ -267,7 +268,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         }
 
-        particlesDrawable.checkCollision(wallsBound, parallelograms);
+        particlesDrawable.checkCollision();
         particlesDrawable.resample();
 
         // redrawing of the object

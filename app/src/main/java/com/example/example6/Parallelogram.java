@@ -71,13 +71,11 @@ public class Parallelogram extends Shape {
         float pathLength = pathMeasure.getLength();
 
         float[] coordinates = new float[2];
-        for (float distance = 0; distance < pathLength; distance += 1) {
+        for (float distance = 0; distance < pathLength/2; distance += 5) {
             pathMeasure.getPosTan(distance, coordinates, null);
-            float x = coordinates[0];
-            float y = coordinates[1];
             int[] point = new int[2];
-            point[0] = (int) x;
-            point[1] = (int) y;
+            point[0] = (int) coordinates[0];
+            point[1] = (int) coordinates[1];
             points.add(point);
         }
 
