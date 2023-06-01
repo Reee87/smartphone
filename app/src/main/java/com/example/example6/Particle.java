@@ -3,16 +3,14 @@ package com.example.example6;
 public class Particle {
     private int x;
     private int y;
-    private int coefficient;
     private boolean isDead = false;
 
-    public Particle(int x, int y, int coefficient) {
+    public Particle(int x, int y) {
         this.x = x;
         this.y = y;
-        this.coefficient = coefficient;
     }
 
-    public void updateCoordinates(float distance, float direction) {
+    public void updateCoordinates(float distance, float direction, int coefficient) {
         double radians = Math.toRadians(direction);
         double sinValue = Math.sin(radians);
         double cosValue = Math.cos(radians);

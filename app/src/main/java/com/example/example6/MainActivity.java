@@ -172,6 +172,9 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             paint.setColor(Color.RED);
             p.draw(canvas, paint);
         }
+
+        ParticlesDrawable particlesDrawable = new ParticlesDrawable(2, coefficient, startX, startY);
+        particlesDrawable.draw(canvas);
     }
 
     @Override

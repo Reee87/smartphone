@@ -14,7 +14,7 @@ public class GenerateParalBounds {
 
         int topLeftX, topLeftY, bottomLeftX, bottomLeftY;
 
-        // Cell 10
+        // Cell 17
         topLeftX = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8+1.24-1.79));
         topLeftY = startY + (int) (coefficient*(-2.73/2-4.22));
         bottomLeftX = startX - (int) (1.79*coefficient/2);
@@ -22,7 +22,7 @@ public class GenerateParalBounds {
         Parallelogram parallelogram1 = new Parallelogram(topLeftX, topLeftY, bottomLeftX, bottomLeftY, (int)(coefficient*1.79), lineWidth);
         this.bounds.add(parallelogram1);
 
-        // Cell 11
+        // Cell 18
         topLeftX = startX - (int) (1.79*coefficient/2);
         topLeftY = startY + (int) (2.73*coefficient/2);
         bottomLeftX = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8+1.24-1.79));

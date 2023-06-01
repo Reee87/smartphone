@@ -14,9 +14,9 @@ public class ParticlesDrawable {
     private Particles particles;
     private int dotSize;
 
-    public ParticlesDrawable(int dotSize) {
+    public ParticlesDrawable(int dotSize, int coefficient, int startX, int startY) {
         this.dotSize = dotSize;
-        this.particles = new Particles();
+        this.particles = new Particles(startX, startY, coefficient);
         initialize();
     }
 
