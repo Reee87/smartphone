@@ -2,12 +2,12 @@ package com.example.example6;
 
 import java.util.ArrayList;
 
-public class GenerateBounds {
+public class GenerateRectBounds {
     ArrayList<Object> bounds;
     int coefficient;
     int lineWidth;
 
-    public GenerateBounds(int startX, int startY, int coefficient, int lineWidth) {
+    public GenerateRectBounds(int startX, int startY, int coefficient, int lineWidth) {
         this.bounds = new ArrayList<>();
         this.coefficient = coefficient;
         this.lineWidth = lineWidth;

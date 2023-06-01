@@ -1,47 +1,38 @@
 package com.example.example6;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Smart Phone Sensing Example 6. Object movement and interaction on canvas.
  */
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener, SensorEventListener  {
 
     /**
      * The buttons.
@@ -60,19 +51,27 @@ public class MainActivity extends Activity implements OnClickListener {
      */
     private Canvas canvas;
     /**
+     * The sensors.
+     */
+    private SensorManager sensorManager;
+    private Sensor stepCounter;
+    private Sensor rotationVector;
+    /**
      * The walls.
      */
     private List<ShapeDrawable> wallsNotBound;
     private List<ShapeDrawable> wallsBound;
     private ArrayList<Parallelogram> parallelograms;
 
-    int dotSize = 10;
-    int lineWidth = 4;
-    int startX;
-    int startY;
+    private int dotSize = 10;
+    private int lineWidth = 4;
+    private int startX;
+    private int startY;
     // width = 17.97
     // height = 30.81
-    int coefficient = 35;
+    private int coefficient = 35;
+    private float[] rotationMatrix = new float[9];
+    private float[] orientationAngles = new float[3];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +92,19 @@ public class MainActivity extends Activity implements OnClickListener {
         left.setOnClickListener(this);
         right.setOnClickListener(this);
 
+        // set step counter
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
+            stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        //set rotation vector
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) != null) {
+            rotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            sensorManager.registerListener(this, rotationVector, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
         // get the screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -111,8 +123,8 @@ public class MainActivity extends Activity implements OnClickListener {
         wallsNotBound = new ArrayList<>();
         wallsBound = new ArrayList<>();
 
-        GenerateBounds generateBounds = new GenerateBounds(startX, startY, coefficient, lineWidth);
-        ArrayList<Object> bounds = generateBounds.getBounds();
+        GenerateRectBounds generateRectBounds = new GenerateRectBounds(startX, startY, coefficient, lineWidth);
+        ArrayList<Object> bounds = generateRectBounds.getBounds();
 
         for(Object bound: bounds) {
             if (bound instanceof ArrayList) {
@@ -136,35 +148,8 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         }
 
-        parallelograms = new ArrayList<>();
-        int topLeftX, topLeftY, bottomLeftX, bottomLeftY;
-
-        // Cell 10
-//        x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
-//        y = startY + (int) (coefficient*(-2.73/2-4.22-3.81));
-        topLeftX = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8+1.24-1.79));
-        topLeftY = startY + (int) (coefficient*(-2.73/2-4.22));
-        bottomLeftX = startX - (int) (1.79*coefficient/2);
-        bottomLeftY = startY - (int) (2.73*coefficient/2);
-        Parallelogram parallelogram1 = new Parallelogram(topLeftX, topLeftY, bottomLeftX, bottomLeftY, (int)(coefficient*1.79), lineWidth);
-        parallelograms.add(parallelogram1);
-
-        // Cell 11
-//        x = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8));
-//        y = startY + (int) (coefficient*(2.73/2+4.22));
-        topLeftX = startX - (int) (1.79*coefficient/2);
-        topLeftY = startY + (int) (2.73*coefficient/2);
-        bottomLeftX = startX + (int) (coefficient*(1.79/2+(4.8-2.3)/2+4.8+1.24-1.79));
-        bottomLeftY = startY + (int) (coefficient*(2.73/2+4.22));
-        Parallelogram parallelogram2 = new Parallelogram(topLeftX, topLeftY, bottomLeftX, bottomLeftY, (int)(coefficient*1.79), lineWidth);
-        parallelograms.add(parallelogram2);
-
-
-//        textView.setText(
-//                "\tleft = " + left +
-//                "\n\ttop = " + top +
-//                "\n\tright = " + right +
-//                "\n\tbottom = " + bottom);
+        GenerateParalBounds generateParalBounds = new GenerateParalBounds(startX, startY, coefficient, lineWidth);
+        parallelograms = generateParalBounds.getBounds();
 
         // create a canvas
         ImageView canvasView = (ImageView) findViewById(R.id.canvas);
@@ -187,11 +172,6 @@ public class MainActivity extends Activity implements OnClickListener {
             paint.setColor(Color.RED);
             p.draw(canvas, paint);
         }
-
-
-//        textView.setText(
-//                "\n\twidth = " +  width +
-//                "\n\theight = " + height);
     }
 
     @Override
@@ -326,5 +306,33 @@ public class MainActivity extends Activity implements OnClickListener {
         }
 
         return false;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+            float stepCount = sensorEvent.values[0];
+            textView.setText("\n\tStep Counter: " + (int) stepCount);
+        }
+
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorEvent.values);
+            SensorManager.getOrientation(rotationMatrix, orientationAngles);
+
+            // Convert the orientation angles from radians to degrees
+            float azimuthDegrees = (float) Math.toDegrees(orientationAngles[0]);
+            float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
+            float rollDegrees = (float) Math.toDegrees(orientationAngles[2]);
+
+            textView.setText(
+                    "\n\tazimuthDegrees: " + azimuthDegrees +
+                            "\n\tpitchDegrees: " + pitchDegrees +
+                            "\n\trollDegrees: " + rollDegrees);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
     }
 }
