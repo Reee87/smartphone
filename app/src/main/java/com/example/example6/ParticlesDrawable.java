@@ -32,7 +32,7 @@ public class ParticlesDrawable {
 
         for (Particle particle : particleArrayList) {
             ShapeDrawable drawable = new ShapeDrawable(new OvalShape());
-            drawable.getPaint().setColor(Color.BLUE);
+            drawable.getPaint().setColor(Color.GREEN);
             drawable.setBounds(particle.getX()-dotSize/2, particle.getY()-dotSize/2, particle.getX()+dotSize/2, particle.getY()+dotSize/2);
 
             particlesDrawable.add(drawable);
@@ -41,7 +41,6 @@ public class ParticlesDrawable {
 
     public void draw(Canvas canvas) {
         for (ShapeDrawable shapeDrawable : particlesDrawable) {
-            shapeDrawable.getPaint().setColor(Color.GREEN);
             shapeDrawable.draw(canvas);
         }
     }
@@ -71,18 +70,6 @@ public class ParticlesDrawable {
                     particleArrayList.get(i).getX()+dotSize/2,
                     particleArrayList.get(i).getY()+dotSize/2);
         }
-
-//        particlesDrawable.clear();
-//
-//        ArrayList<Particle> particleArrayList = particles.getParticles();
-//
-//        for (Particle particle : particleArrayList) {
-//            ShapeDrawable drawable = new ShapeDrawable(new OvalShape());
-//            drawable.getPaint().setColor(Color.BLUE);
-//            drawable.setBounds(particle.getX()-dotSize/2, particle.getY()-dotSize/2, particle.getX()+dotSize/2, particle.getY()+dotSize/2);
-//
-//            particlesDrawable.add(drawable);
-//        }
     }
 
     public void setBounds(List<ShapeDrawable> wallsBound, ArrayList<Parallelogram> parallelograms) {
@@ -105,44 +92,74 @@ public class ParticlesDrawable {
             p.getPath().get(0).computeBounds(rectF, true);
             Rect rect = new Rect();
             rectF.roundOut(rect);
-            parallelogramsRect.add(rect);
+            parallelogramsRect.add(new Rect(rect.left, rect.top, rect.right+p.getPWidth(), rect.bottom));
         }
     }
 
-    private boolean isCollision(ShapeDrawable drawable) {
-        for(Rect wall : wallsBoundRect) {
-            if(isCollision(new Rect(wall.left, wall.top, wall.right, wall.bottom), drawable))
-                return true;
-        }
-
-        for(Parallelogram p : parallelograms) {
-            ArrayList<int[]> points = p.getPoints();
-            if(isCollision(points, drawable))
+    public boolean isCollision(ShapeDrawable drawable) {
+        for(ShapeDrawable wall : wallsBound) {
+            if(isCollision(wall, drawable))
                 return true;
         }
 
         for(int i=0; i<2; i++) {
             Rect rect = parallelogramsRect.get(i);
             if (isCollision(new Rect(rect.left, rect.top, rect.right, rect.bottom), drawable))
-                if(isCollision(parallelograms.get(i).getPoints(), drawable))
+                if(isCollision(parallelograms.get(i), drawable))
                     return true;
         }
 
         return false;
     }
 
-    private boolean isCollision(ArrayList<int[]> points, ShapeDrawable second) {
-        Rect rect = new Rect(second.getBounds());
-        for (int[] point : points) {
-            if (rect.contains(point[0], point[1])) {
-                return true;
-            }
-        }
+//    public boolean isCollision(ShapeDrawable drawable) {
+//        for(Rect wall : wallsBoundRect) {
+//            if(isCollision(new Rect(wall.left, wall.top, wall.right, wall.bottom), drawable))
+//                return true;
+//        }
+//
+//        for(int i=0; i<2; i++) {
+//            Rect rect = parallelogramsRect.get(i);
+//            if (isCollision(new Rect(rect.left, rect.top, rect.right, rect.bottom), drawable))
+//                if(isCollision(parallelograms.get(i), drawable))
+//                    return true;
+//        }
+//
+//        return false;
+//    }
 
-        return false;
+    public boolean isCollision(Parallelogram parallelogram, ShapeDrawable second) {
+        int topLeftX, topLeftY, bottomLeftX, bottomLeftY, width;
+        topLeftX = parallelogram.getTopLeftX();
+        topLeftY = parallelogram.getTopLeftY();
+        bottomLeftX = parallelogram.getBottomLeftX();
+        bottomLeftY = parallelogram.getBottomLeftY();
+        width = parallelogram.getPWidth();
+
+        float slop = (float) (topLeftY-bottomLeftY) / (float) (topLeftX-bottomLeftX);
+        // y - bottomLeftY = slop * (x - bottomLeftX)
+
+        Rect rect = second.getBounds();
+        int x, y, xLeftBound, xRightBound;
+        x = (rect.left + rect.right)/2;
+        y = (rect.top + rect.bottom)/2;
+        xLeftBound = (int) ((y - bottomLeftY) / slop + bottomLeftX);
+        xRightBound = xLeftBound + width;
+
+        if (x < xLeftBound || x > xRightBound) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
-    private boolean isCollision(Rect first, ShapeDrawable second) {
+    public boolean isCollision(Rect first, ShapeDrawable second) {
         return first.intersect(second.getBounds());
+    }
+
+    public boolean isCollision(ShapeDrawable first, ShapeDrawable second) {
+        Rect firstRect = new Rect(first.getBounds());
+        return firstRect.intersect(second.getBounds());
     }
 }

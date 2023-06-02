@@ -257,7 +257,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             }
         }
         // if there is a collision between the dot and any of the walls
-        if(isCollision()) {
+        if(particlesDrawable.isCollision(drawable)) {
             // reset dot to center of canvas
             Display display = getWindowManager().getDefaultDisplay();
             Point size = new Point();
@@ -265,7 +265,6 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             int width = size.x;
             int height = size.y;
             drawable.setBounds(startX-dotSize/2, startY-dotSize/2, startX+dotSize/2, startY+dotSize/2);
-
         }
 
         particlesDrawable.checkCollision();
@@ -289,45 +288,6 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         particlesDrawable.draw(canvas);
         drawable.draw(canvas);
 
-    }
-
-    /**
-     * Determines if the drawable dot intersects with any of the walls.
-     * @return True if that's true, false otherwise.
-     */
-    private boolean isCollision() {
-        for(ShapeDrawable wall : wallsBound) {
-            if(isCollision(wall, drawable))
-                return true;
-        }
-        for(Parallelogram p : parallelograms) {
-            ArrayList<int[]> points = p.getPoints();
-                if(isCollision(points, drawable))
-                    return true;
-        }
-        return false;
-    }
-
-    /**
-     * Determines if two shapes intersect.
-     * @param first The first shape.
-     * @param second The second shape.
-     * @return True if they intersect, false otherwise.
-     */
-    private boolean isCollision(ShapeDrawable first, ShapeDrawable second) {
-        Rect firstRect = new Rect(first.getBounds());
-        return firstRect.intersect(second.getBounds());
-    }
-
-    private boolean isCollision(ArrayList<int[]> points, ShapeDrawable second) {
-        Rect rect = new Rect(second.getBounds());
-        for (int[] point : points) {
-            if (rect.contains(point[0], point[1])) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override
