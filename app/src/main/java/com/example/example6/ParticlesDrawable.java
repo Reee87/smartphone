@@ -64,25 +64,25 @@ public class ParticlesDrawable {
     }
 
     private void synchronize() {
-//        ArrayList<Particle> particleArrayList = particles.getParticles();
-//        for (int i=0; i<particlesDrawable.size(); i++) {
-//            particlesDrawable.get(i).setBounds(particleArrayList.get(i).getX()-dotSize/2,
-//                    particleArrayList.get(i).getY()-dotSize/2,
-//                    particleArrayList.get(i).getX()+dotSize/2,
-//                    particleArrayList.get(i).getY()+dotSize/2);
-//        }
-
-        particlesDrawable.clear();
-
         ArrayList<Particle> particleArrayList = particles.getParticles();
-
-        for (Particle particle : particleArrayList) {
-            ShapeDrawable drawable = new ShapeDrawable(new OvalShape());
-            drawable.getPaint().setColor(Color.BLUE);
-            drawable.setBounds(particle.getX()-dotSize/2, particle.getY()-dotSize/2, particle.getX()+dotSize/2, particle.getY()+dotSize/2);
-
-            particlesDrawable.add(drawable);
+        for (int i=0; i<particlesDrawable.size(); i++) {
+            particlesDrawable.get(i).setBounds(particleArrayList.get(i).getX()-dotSize/2,
+                    particleArrayList.get(i).getY()-dotSize/2,
+                    particleArrayList.get(i).getX()+dotSize/2,
+                    particleArrayList.get(i).getY()+dotSize/2);
         }
+
+//        particlesDrawable.clear();
+//
+//        ArrayList<Particle> particleArrayList = particles.getParticles();
+//
+//        for (Particle particle : particleArrayList) {
+//            ShapeDrawable drawable = new ShapeDrawable(new OvalShape());
+//            drawable.getPaint().setColor(Color.BLUE);
+//            drawable.setBounds(particle.getX()-dotSize/2, particle.getY()-dotSize/2, particle.getX()+dotSize/2, particle.getY()+dotSize/2);
+//
+//            particlesDrawable.add(drawable);
+//        }
     }
 
     public void setBounds(List<ShapeDrawable> wallsBound, ArrayList<Parallelogram> parallelograms) {

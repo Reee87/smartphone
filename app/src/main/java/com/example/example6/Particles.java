@@ -3,6 +3,7 @@ package com.example.example6;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 
 public class Particles {
     private ArrayList<Particle> particles;
@@ -11,7 +12,10 @@ public class Particles {
     private int coefficient;
     private int startX;
     private int startY;
-    int lineWidth;
+    private int lineWidth;
+    private Random random;
+    private static final int MOTION_NOISE = 1; // Motion model noise
+
 
     public Particles(int startX, int startY, int coefficient, int lineWidth) {
         this.particles = new ArrayList<>();
@@ -19,6 +23,7 @@ public class Particles {
         this.startX = startX;
         this.startY = startY;
         this.lineWidth = lineWidth;
+        this.random = new Random();
         initialize();
     }
 
@@ -200,8 +205,11 @@ public class Particles {
 
     public void move(int distance, int direction) {
         int[] delta = updateCoordinates(distance, direction);
+        int[] newDelta = new int[2];
         for (Particle particle : particles) {
-            particle.updateCoordinates(delta);
+            newDelta[0] = delta[0] + (int) (random.nextGaussian() * MOTION_NOISE);
+            newDelta[1] = delta[1] + (int) (random.nextGaussian() * MOTION_NOISE);
+            particle.updateCoordinates(newDelta);
         }
     }
 
@@ -225,22 +233,35 @@ public class Particles {
             }
         }
 
-//        int currentLength = particles.size();
-//        ArrayList<Particle> particles1 = (ArrayList<Particle>) particles.clone();
-//
-//        for (int i=0; i<length/currentLength-1; i++) {
-//            particles.addAll(particles1);
-//        }
-//
-//        currentLength = particles.size();
+        int currentLength = particles.size();
+        ArrayList<Particle> particles1 = (ArrayList<Particle>) particles.clone();
+
+        for (int i=0; i<length/currentLength-1; i++) {
+            particles.addAll(particles1);
+        }
+
+        currentLength = particles.size();
+
+        for (int i=0; i<length-currentLength; i++) {
+            int index = random.nextInt(currentLength);
+            Particle particle = particles.get(index);
+            Particle particle1 = new Particle(particle.getX(), particle.getY());
+            particles.add(particle1);
+        }
+
 //        Iterator<Particle> it = particles1.iterator();
-//        int i=0;
+//
+//        int step = length / (length - currentLength);
+//        Random randomI = new Random();
+//        int i = randomI.nextInt(step);
 //
 //        while (it.hasNext() && i<length-currentLength) {
 //            Particle particle = it.next();
-//            Particle particle1 = new Particle(particle.getX(), particle.getY());
-//            particles.add(particle1);
-//            i++;
+//            if ((i + step) % step == 0) {
+//                Particle particle1 = new Particle(particle.getX(), particle.getY());
+//                particles.add(particle1);
+//            }
+//            i += 1;
 //        }
     }
 
