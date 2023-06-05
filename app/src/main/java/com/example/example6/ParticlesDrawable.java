@@ -62,6 +62,10 @@ public class ParticlesDrawable {
         synchronize();
     }
 
+    public int checkCellNum() {
+        return particles.checkCellNum();
+    }
+
     private void synchronize() {
         ArrayList<Particle> particleArrayList = particles.getParticles();
         for (int i=0; i<particlesDrawable.size(); i++) {
@@ -111,22 +115,6 @@ public class ParticlesDrawable {
 
         return false;
     }
-
-//    public boolean isCollision(ShapeDrawable drawable) {
-//        for(Rect wall : wallsBoundRect) {
-//            if(isCollision(new Rect(wall.left, wall.top, wall.right, wall.bottom), drawable))
-//                return true;
-//        }
-//
-//        for(int i=0; i<2; i++) {
-//            Rect rect = parallelogramsRect.get(i);
-//            if (isCollision(new Rect(rect.left, rect.top, rect.right, rect.bottom), drawable))
-//                if(isCollision(parallelograms.get(i), drawable))
-//                    return true;
-//        }
-//
-//        return false;
-//    }
 
     public boolean isCollision(Parallelogram parallelogram, ShapeDrawable second) {
         int topLeftX, topLeftY, bottomLeftX, bottomLeftY, width;

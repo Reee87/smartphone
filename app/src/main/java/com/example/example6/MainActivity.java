@@ -210,50 +210,34 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         switch (v.getId()) {
             // UP BUTTON
             case R.id.button1: {
-                Toast.makeText(getApplication(), "UP", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left,r.top-stepLength,r.right,r.bottom-stepLength);
-
                 particlesDrawable.move(stepLength, 90);
 
-                textView.setText("\n\tMove Up" + "\n\tTop Margin = "
-                        + drawable.getBounds().top);
                 break;
             }
             // DOWN BUTTON
             case R.id.button4: {
-                Toast.makeText(getApplication(), "DOWN", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left,r.top+stepLength,r.right,r.bottom+stepLength);
-
                 particlesDrawable.move(stepLength, 270);
 
-                textView.setText("\n\tMove Down" + "\n\tTop Margin = "
-                        + drawable.getBounds().top);
                 break;
             }
             // LEFT BUTTON
             case R.id.button2: {
-                Toast.makeText(getApplication(), "LEFT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left-stepLength,r.top,r.right-stepLength,r.bottom);
-
                 particlesDrawable.move(stepLength, 180);
 
-                textView.setText("\n\tMove Left" + "\n\tLeft Margin = "
-                        + drawable.getBounds().left);
                 break;
             }
             // RIGHT BUTTON
             case R.id.button3: {
-                Toast.makeText(getApplication(), "RIGHT", Toast.LENGTH_SHORT).show();
                 Rect r = drawable.getBounds();
                 drawable.setBounds(r.left+stepLength,r.top,r.right+stepLength,r.bottom);
-
                 particlesDrawable.move(stepLength, 0);
 
-                textView.setText("\n\tMove Right" + "\n\tLeft Margin = "
-                        + drawable.getBounds().left);
                 break;
             }
         }
@@ -270,6 +254,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         particlesDrawable.checkCollision();
         particlesDrawable.resample();
+        textCellNum.setText("Cell Number = " + particlesDrawable.checkCellNum());
 
         // redrawing of the object
         canvas.drawColor(Color.WHITE);

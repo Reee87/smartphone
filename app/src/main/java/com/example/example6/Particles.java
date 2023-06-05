@@ -7,14 +7,15 @@ import java.util.Random;
 public class Particles {
     private ArrayList<Particle> particles;
     private int length;
-    private float density = 0.15F;
+    private float density = 0.1F;
     private int coefficient;
     private int startX;
     private int startY;
     private int lineWidth;
+    private int averageX;
+    private int averageY;
+    ArrayList<Rectangle> rectangleArrayList;
     private Random random;
-    private static final int MOTION_NOISE = 1; // Motion model noise
-
 
     public Particles(int startX, int startY, int coefficient, int lineWidth) {
         this.particles = new ArrayList<>();
@@ -30,7 +31,7 @@ public class Particles {
         int width;
 
         Rectangles rectangles = new Rectangles(startX, startY, coefficient);
-        ArrayList<Rectangle> rectangleArrayList = rectangles.getRectangles();
+        rectangleArrayList = rectangles.getRectangles();
 
         for (Rectangle rectBound : rectangleArrayList) {
             particles.addAll(generateParticles(rectBound.getX(), rectBound.getY(), rectBound.getWidth(), rectBound.getHeight()));
@@ -116,17 +117,16 @@ public class Particles {
     }
 
     public void move(int distance, int direction) {
-        int[] delta = updateCoordinates(distance, direction);
-        int[] newDelta = new int[2];
         for (Particle particle : particles) {
-            newDelta[0] = delta[0] + (int) (random.nextGaussian() * MOTION_NOISE);
-            newDelta[1] = delta[1] + (int) (random.nextGaussian() * MOTION_NOISE);
-            particle.updateCoordinates(newDelta);
+            int[] delta = updateCoordinates(distance, direction);
+            particle.updateCoordinates(delta);
         }
     }
 
     private int[] updateCoordinates(int distance, int direction) {
         int[] delta = new int[2];
+        distance += (int) (random.nextGaussian() * 1);
+        direction += (int) (random.nextGaussian() * 3);
         double radians = Math.toRadians(direction);
         double sinValue = Math.sin(radians);
         double cosValue = Math.cos(radians);
@@ -161,20 +161,33 @@ public class Particles {
             particles.add(particle1);
         }
 
-//        Iterator<Particle> it = particles1.iterator();
-//
-//        int step = length / (length - currentLength);
-//        Random randomI = new Random();
-//        int i = randomI.nextInt(step);
-//
-//        while (it.hasNext() && i<length-currentLength) {
-//            Particle particle = it.next();
-//            if ((i + step) % step == 0) {
-//                Particle particle1 = new Particle(particle.getX(), particle.getY());
-//                particles.add(particle1);
-//            }
-//            i += 1;
-//        }
+        calculateAverage();
+    }
+
+    private void calculateAverage() {
+        averageX = 0;
+        averageY = 0;
+        for (Particle particle : particles) {
+            averageX += particle.getX();
+            averageY += particle.getY();
+        }
+        averageX /= particles.size();
+        averageY /= particles.size();
+    }
+
+    public int checkCellNum() {
+        for (Rectangle rectangle : rectangleArrayList) {
+            if (averageX > rectangle.getTopLeftX() && averageX < rectangle.getTopRightX() &&
+            averageY > rectangle.getTopLeftY() && averageY < rectangle.getBottomLeftY()) {
+                return rectangle.getCellNum();
+            }
+        }
+
+        if (averageY < startY) {
+            return 17;
+        } else {
+            return 18;
+        }
     }
 
     public ArrayList<Particle> getParticles() {
