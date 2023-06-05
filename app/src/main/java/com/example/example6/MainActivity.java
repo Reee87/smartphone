@@ -41,7 +41,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     /**
      * The text view.
      */
-    private TextView textView;
+    private TextView textView, textCellNum;
     /**
      * The shape.
      */
@@ -87,6 +87,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         // set the text view
         textView = (TextView) findViewById(R.id.textView1);
+        textCellNum = (TextView) findViewById(R.id.cellNum);
 
         // set listeners
         up.setOnClickListener(this);

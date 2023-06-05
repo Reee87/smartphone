@@ -1,88 +1,70 @@
 package com.example.example6;
 
-import java.util.ArrayList;
-
 public class Rectangle {
-    int lineWidth;
+    private int x;
+    private int y;
+    private int width;
+    private int height;
 
-    public Rectangle(int lineWidth) {
-        this.lineWidth = lineWidth;
+    private int cellNum;
+
+    public Rectangle(int x, int y, int width, int height, int cellNum) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.cellNum = cellNum;
     }
 
-    public ArrayList<Object> generateBound(int x, int y, int width, int height,
-                                                       boolean isBoundTop, boolean isBoundBottom,
-                                                       boolean isBoundLeft, boolean isBoundRight) {
-        ArrayList<Object> bound = new ArrayList<>();
-
-        bound.add(generateTopBound(x, y, width, isBoundTop));
-        bound.add(generateBottomBound(x, y, width, height, isBoundBottom));
-        bound.add(generateLeftBound(x, y, height, isBoundLeft));
-        bound.add(generateRightBound(x, y, width, height, isBoundRight));
-
-        return bound;
+    public int getX() {
+        return x;
     }
 
-    public ArrayList<Object> generateTopBound(int x, int y, int width, boolean isBoundTop) {
-        int[] rect = new int[4];
-
-        rect[0] = x;
-        rect[1] = y - lineWidth/2;
-        rect[2] = x + width;
-        rect[3] = y + lineWidth/2;
-
-        ArrayList<Object> top = new ArrayList<>();
-        top.add(rect);
-        top.add(isBoundTop);
-
-        return top;
+    public int getY() {
+        return y;
     }
 
-    public ArrayList<Object> generateBottomBound(int x, int y, int width, int height, boolean isBoundBottom) {
-        y = y + height;
-
-        int[] rect = new int[4];
-
-        rect[0] = x;
-        rect[1] = y - lineWidth/2;
-        rect[2] = x + width;
-        rect[3] = y + lineWidth/2;
-
-        ArrayList<Object> bottom = new ArrayList<>();
-        bottom.add(rect);
-        bottom.add(isBoundBottom);
-
-        return bottom;
+    public int getWidth() {
+        return width;
     }
 
-    public ArrayList<Object> generateLeftBound(int x, int y, int height, boolean isBoundLeft) {
-        int[] rect = new int[4];
-
-        rect[0] = x - lineWidth/2;
-        rect[1] = y;
-        rect[2] = x + lineWidth/2;
-        rect[3] = y + height;
-
-        ArrayList<Object> left = new ArrayList<>();
-        left.add(rect);
-        left.add(isBoundLeft);
-
-        return left;
+    public int getHeight() {
+        return height;
     }
 
-    public ArrayList generateRightBound(int x, int y, int width, int height, boolean isBoundRight) {
-        x = x + width;
+    public int getCellNum() {
+        return cellNum;
+    }
 
-        int[] rect = new int[4];
+    public int getTopLeftX() {
+        return getX();
+    }
 
-        rect[0] = x - lineWidth/2;
-        rect[1] = y;
-        rect[2] = x + lineWidth/2;
-        rect[3] = y + height;
+    public int getTopLeftY() {
+        return getY();
+    }
 
-        ArrayList<Object> right = new ArrayList<>();
-        right.add(rect);
-        right.add(isBoundRight);
+    public int getBottomLeftX() {
+        return getX();
+    }
 
-        return right;
+    public int getBottomLeftY() {
+        return getY() + height;
+    }
+
+    public int getTopRightX() {
+        return getX() + width;
+    }
+
+    public int getTopRightY() {
+        return getY();
+    }
+
+    public int getBottomRightX() {
+        return getX() + width;
+    }
+
+    public int getBottomRightY() {
+        return getY() + height;
     }
 }
