@@ -40,6 +40,7 @@ public class ParticlesDrawable {
     }
 
     public void draw(Canvas canvas) {
+        synchronize();
         for (ShapeDrawable shapeDrawable : particlesDrawable) {
             shapeDrawable.draw(canvas);
         }

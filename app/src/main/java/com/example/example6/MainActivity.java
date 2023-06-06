@@ -65,8 +65,8 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private ParticlesDrawable particlesDrawable;
 
     private int dotSize = 6;
-    private int lineWidth = 4;
-    int stepLength = 5;
+    private int lineWidth = 25;
+    int stepLength = 25;
     private int startX;
     private int startY;
     // width = 17.97

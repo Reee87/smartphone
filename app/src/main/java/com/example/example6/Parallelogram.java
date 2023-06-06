@@ -39,10 +39,10 @@ public class Parallelogram extends Shape {
 
     private Path drawLeft() {
         Path left = new Path();
-        left.moveTo(topLeftX-lineWidth/2, topLeftY);
-        left.lineTo(bottomLeftX-lineWidth/2, bottomLeftY);
-        left.lineTo(bottomLeftX+lineWidth/2, bottomLeftY);
-        left.lineTo(topLeftX+lineWidth/2, topLeftY);
+        left.moveTo(topLeftX-lineWidth, topLeftY);
+        left.lineTo(bottomLeftX-lineWidth, bottomLeftY);
+        left.lineTo(bottomLeftX, bottomLeftY);
+        left.lineTo(topLeftX, topLeftY);
         left.close();
 
         return left;
@@ -50,10 +50,10 @@ public class Parallelogram extends Shape {
 
     private Path drawRight() {
         Path right = new Path();
-        right.moveTo(topLeftX+width-lineWidth/2, topLeftY);
-        right.lineTo(bottomLeftX+width-lineWidth/2, bottomLeftY);
-        right.lineTo(bottomLeftX+width+lineWidth/2, bottomLeftY);
-        right.lineTo(topLeftX+width+lineWidth/2, topLeftY);
+        right.moveTo(topLeftX+width, topLeftY);
+        right.lineTo(bottomLeftX+width, bottomLeftY);
+        right.lineTo(bottomLeftX+width+lineWidth, bottomLeftY);
+        right.lineTo(topLeftX+width+lineWidth, topLeftY);
         right.close();
 
         return right;

@@ -26,9 +26,9 @@ public class RectangleBounds {
         int[] rect = new int[4];
 
         rect[0] = x;
-        rect[1] = y - lineWidth/2;
+        rect[1] = y - lineWidth;
         rect[2] = x + width;
-        rect[3] = y + lineWidth/2;
+        rect[3] = y;
 
         ArrayList<Object> top = new ArrayList<>();
         top.add(rect);
@@ -43,9 +43,9 @@ public class RectangleBounds {
         int[] rect = new int[4];
 
         rect[0] = x;
-        rect[1] = y - lineWidth/2;
+        rect[1] = y;
         rect[2] = x + width;
-        rect[3] = y + lineWidth/2;
+        rect[3] = y + lineWidth;
 
         ArrayList<Object> bottom = new ArrayList<>();
         bottom.add(rect);
@@ -57,9 +57,9 @@ public class RectangleBounds {
     public ArrayList<Object> generateLeftBound(int x, int y, int height, boolean isBoundLeft) {
         int[] rect = new int[4];
 
-        rect[0] = x - lineWidth/2;
+        rect[0] = x - lineWidth;
         rect[1] = y;
-        rect[2] = x + lineWidth/2;
+        rect[2] = x;
         rect[3] = y + height;
 
         ArrayList<Object> left = new ArrayList<>();
@@ -74,9 +74,73 @@ public class RectangleBounds {
 
         int[] rect = new int[4];
 
-        rect[0] = x - lineWidth/2;
+        rect[0] = x;
         rect[1] = y;
-        rect[2] = x + lineWidth/2;
+        rect[2] = x + lineWidth;
+        rect[3] = y + height;
+
+        ArrayList<Object> right = new ArrayList<>();
+        right.add(rect);
+        right.add(isBoundRight);
+
+        return right;
+    }
+
+    public ArrayList<Object> generateTopBound(int x, int y, int width, boolean isBoundTop, int newLineWidth) {
+        int[] rect = new int[4];
+
+        rect[0] = x;
+        rect[1] = y - newLineWidth;
+        rect[2] = x + width;
+        rect[3] = y;
+
+        ArrayList<Object> top = new ArrayList<>();
+        top.add(rect);
+        top.add(isBoundTop);
+
+        return top;
+    }
+
+    public ArrayList<Object> generateBottomBound(int x, int y, int width, int height, boolean isBoundBottom, int newLineWidth) {
+        y = y + height;
+
+        int[] rect = new int[4];
+
+        rect[0] = x;
+        rect[1] = y;
+        rect[2] = x + width;
+        rect[3] = y + newLineWidth;
+
+        ArrayList<Object> bottom = new ArrayList<>();
+        bottom.add(rect);
+        bottom.add(isBoundBottom);
+
+        return bottom;
+    }
+
+    public ArrayList<Object> generateLeftBound(int x, int y, int height, boolean isBoundLeft, int newLineWidth) {
+        int[] rect = new int[4];
+
+        rect[0] = x - newLineWidth;
+        rect[1] = y;
+        rect[2] = x;
+        rect[3] = y + height;
+
+        ArrayList<Object> left = new ArrayList<>();
+        left.add(rect);
+        left.add(isBoundLeft);
+
+        return left;
+    }
+
+    public ArrayList generateRightBound(int x, int y, int width, int height, boolean isBoundRight, int newLineWidth) {
+        x = x + width;
+
+        int[] rect = new int[4];
+
+        rect[0] = x;
+        rect[1] = y;
+        rect[2] = x + newLineWidth;
         rect[3] = y + height;
 
         ArrayList<Object> right = new ArrayList<>();

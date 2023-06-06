@@ -128,11 +128,11 @@ public class GenerateRectBounds {
 
         // Cell 17
         rectangle = rectangleArrayList.get(7);
-        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX()-(int)(coefficient*(1.79-1.24)), rectangle.getY(), (int)(coefficient*(1.79-1.24)), rectangle.getHeight(), true));
+        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX()-(int)(coefficient*(1.79-1.24)), rectangle.getY(), (int)(coefficient*(1.79-1.24)), rectangle.getHeight(), true, 4));
 
         // Cell 18
         rectangle = rectangleArrayList.get(8);
-        bounds.add(rectangleBounds.generateTopBound(rectangle.getX()-(int)(coefficient*(1.79-1.24)), rectangle.getY(), (int)(coefficient*(1.79-1.24)), true));
+        bounds.add(rectangleBounds.generateTopBound(rectangle.getX()-(int)(coefficient*(1.79-1.24)), rectangle.getY(), (int)(coefficient*(1.79-1.24)), true, 4));
     }
 
     public ArrayList<Object> getBounds() {
