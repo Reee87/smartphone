@@ -24,7 +24,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +60,13 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
      */
     private List<ShapeDrawable> wallsNotBound;
     private List<ShapeDrawable> wallsBound;
+    private List<ShapeDrawable> wallsInvisible;
+
     private ArrayList<Parallelogram> parallelograms;
     private ParticlesDrawable particlesDrawable;
 
     private int dotSize = 6;
-    private int lineWidth = 25;
+    private int lineWidth = 4;
     int stepLength = 25;
     private int startX;
     private int startY;
@@ -125,9 +126,10 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         wallsNotBound = new ArrayList<>();
         wallsBound = new ArrayList<>();
+        wallsInvisible = new ArrayList<>();
 
-        GenerateRectBounds generateRectBounds = new GenerateRectBounds(startX, startY, coefficient, lineWidth);
-        ArrayList<Object> bounds = generateRectBounds.getBounds();
+        GenerateRectVisibleBounds generateRectVisibleBounds = new GenerateRectVisibleBounds(startX, startY, coefficient, lineWidth);
+        ArrayList<Object> bounds = generateRectVisibleBounds.getBounds();
 
         for(Object bound: bounds) {
             if (bound instanceof ArrayList) {
@@ -151,6 +153,28 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             }
         }
 
+        GenerateRectInvisibleBounds generateRectInvisibleBounds = new GenerateRectInvisibleBounds(startX, startY, coefficient, 35);
+        ArrayList<Object> bounds1 = generateRectInvisibleBounds.getBounds();
+
+        for(Object bound: bounds1) {
+            if (bound instanceof ArrayList) {
+                ArrayList<Object> b = (ArrayList<Object>) bound;
+                if (b.get(0) instanceof int[]) {
+                    int[] bArray = (int[]) b.get(0);
+
+                    if (b.get(1) instanceof Boolean) {
+                        Boolean isBound = (Boolean) b.get(1);
+
+                        ShapeDrawable d = new ShapeDrawable(new RectShape());
+                        d.setBounds(bArray[0], bArray[1], bArray[2], bArray[3]);
+                        if(isBound) {
+                            wallsInvisible.add(d);
+                        }
+                    }
+                }
+            }
+        }
+
         GenerateParalBounds generateParalBounds = new GenerateParalBounds(startX, startY, coefficient, lineWidth);
         parallelograms = generateParalBounds.getBounds();
 
@@ -162,6 +186,10 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         // draw the objects
         drawable.draw(canvas);
+        for(ShapeDrawable wall : wallsInvisible) {
+            wall.getPaint().setColor(Color.GRAY);
+            wall.draw(canvas);
+        }
         for(ShapeDrawable wall : wallsNotBound) {
             wall.getPaint().setColor(Color.BLUE);
             wall.draw(canvas);
@@ -178,7 +206,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         particlesDrawable = new ParticlesDrawable(dotSize, coefficient, startX, startY, lineWidth);
         particlesDrawable.draw(canvas);
-        particlesDrawable.setBounds(wallsBound, parallelograms);
+        particlesDrawable.setBounds(wallsInvisible, parallelograms);
     }
 
     @Override
@@ -258,6 +286,10 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         // redrawing of the object
         canvas.drawColor(Color.WHITE);
+        for(ShapeDrawable wall : wallsInvisible) {
+            wall.getPaint().setColor(Color.GRAY);
+            wall.draw(canvas);
+        }
         for(ShapeDrawable wall : wallsNotBound) {
             wall.getPaint().setColor(Color.BLUE);
             wall.draw(canvas);

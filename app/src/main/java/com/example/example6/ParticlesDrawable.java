@@ -93,11 +93,15 @@ public class ParticlesDrawable {
         }
 
         for(Parallelogram p : parallelograms) {
-            RectF rectF = new RectF();
-            p.getPath().get(0).computeBounds(rectF, true);
+            RectF rectF1 = new RectF();
+            p.getPath().get(0).computeBounds(rectF1, true);
+            RectF rectF2 = new RectF();
+            p.getPath().get(0).computeBounds(rectF2, true);
+            rectF1.union(rectF2);
             Rect rect = new Rect();
-            rectF.roundOut(rect);
-            parallelogramsRect.add(new Rect(rect.left, rect.top, rect.right+p.getPWidth(), rect.bottom));
+            rectF1.roundOut(rect);
+//            parallelogramsRect.add(new Rect(rect.left, rect.top, rect.right+p.getPWidth(), rect.bottom));
+            parallelogramsRect.add(new Rect(0, rect.top, 720, rect.bottom));
         }
     }
 
@@ -142,6 +146,31 @@ public class ParticlesDrawable {
             return false;
         }
     }
+
+//    public boolean isCollision(Parallelogram parallelogram, ShapeDrawable second) {
+//        int topRightX, topRightY, bottomRightX, bottomRightY, width;
+//        topRightX = parallelogram.getTopRightX();
+//        topRightY = parallelogram.getTopRightY();
+//        bottomRightX = parallelogram.getBottomRightX();
+//        bottomRightY = parallelogram.getBottomRightY();
+//        width = parallelogram.getPWidth();
+//
+//        float slop = (float) (topRightY-bottomRightY) / (float) (topRightX-bottomRightX);
+//
+//        Rect rect = second.getBounds();
+//        int x, y, xLeftBound, xRightBound;
+//        x = (rect.left + rect.right)/2;
+//        y = (rect.top + rect.bottom)/2;
+//        xLeftBound = (int) ((y - bottomRightY) / slop + bottomRightX);
+//        xRightBound = xLeftBound + width;
+//
+//        if (x < xLeftBound || x > xRightBound) {
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
+//    }
 
     public boolean isCollision(Rect first, ShapeDrawable second) {
         return first.intersect(second.getBounds());

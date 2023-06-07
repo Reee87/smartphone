@@ -70,7 +70,8 @@ public class Particles {
 
     private ArrayList<Particle> generateParticles(int x, int y, int width, int height) {
         ArrayList<Particle> particles1 = new ArrayList<>();
-        int margin = lineWidth/2+1;
+
+        int margin = 1;
 
         for (int i=x+margin; i<x+width-margin; i+=(int)(1/density)) {
             for (int j=y+margin; j<y+height-margin; j+=(int)(1/density)) {
@@ -85,8 +86,7 @@ public class Particles {
     private ArrayList<Particle> generateParticles(int topLeftX, int topLeftY, int bottomLeftX, int bottomLeftY, int width) {
         ArrayList<Particle> particles1 = new ArrayList<>();
 
-        int lineWidth = 4;
-        int margin = lineWidth/2+1;
+        int margin = 1;
 
         float slop = (float) (topLeftY-bottomLeftY) / (float) (topLeftX-bottomLeftX);
         // y - bottomLeftY = slop * (x - bottomLeftX)
@@ -125,8 +125,8 @@ public class Particles {
 
     private int[] updateCoordinates(int distance, int direction) {
         int[] delta = new int[2];
-        distance += (int) (random.nextGaussian() * 1);
-        direction += (int) (random.nextGaussian() * 3);
+        distance += (int) (random.nextGaussian() * 3.5);
+        direction += (int) (random.nextGaussian() * 15);
         double radians = Math.toRadians(direction);
         double sinValue = Math.sin(radians);
         double cosValue = Math.cos(radians);

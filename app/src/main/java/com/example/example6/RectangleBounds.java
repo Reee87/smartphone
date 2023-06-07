@@ -10,12 +10,14 @@ public class RectangleBounds {
     }
 
     public ArrayList<Object> generateBound(int x, int y, int width, int height,
-                                                       boolean isBoundTop, boolean isBoundBottom,
-                                                       boolean isBoundLeft, boolean isBoundRight) {
+                                           boolean isBoundTop, boolean isBoundBottom,
+                                           boolean isBoundLeft, boolean isBoundRight,
+                                           boolean roundCornerA, boolean roundCornerB,
+                                           boolean roundCornerC, boolean roundCornerD) {
         ArrayList<Object> bound = new ArrayList<>();
 
-        bound.add(generateTopBound(x, y, width, isBoundTop));
-        bound.add(generateBottomBound(x, y, width, height, isBoundBottom));
+        bound.add(generateTopBound(x, y, width, isBoundTop, roundCornerA, roundCornerB));
+        bound.add(generateBottomBound(x, y, width, height, isBoundBottom, roundCornerC, roundCornerD));
         bound.add(generateLeftBound(x, y, height, isBoundLeft));
         bound.add(generateRightBound(x, y, width, height, isBoundRight));
 
@@ -46,6 +48,54 @@ public class RectangleBounds {
         rect[1] = y;
         rect[2] = x + width;
         rect[3] = y + lineWidth;
+
+        ArrayList<Object> bottom = new ArrayList<>();
+        bottom.add(rect);
+        bottom.add(isBoundBottom);
+
+        return bottom;
+    }
+
+    public ArrayList<Object> generateTopBound(int x, int y, int width, boolean isBoundTop, boolean roundCornerA, boolean roundCornerB) {
+        int[] rect = new int[4];
+
+        rect[0] = x;
+        rect[1] = y - lineWidth;
+        rect[2] = x + width;
+        rect[3] = y;
+
+        if (roundCornerA) {
+            rect[0] -= lineWidth;
+        }
+
+        if (roundCornerB) {
+            rect[2] += lineWidth;
+        }
+
+        ArrayList<Object> top = new ArrayList<>();
+        top.add(rect);
+        top.add(isBoundTop);
+
+        return top;
+    }
+
+    public ArrayList<Object> generateBottomBound(int x, int y, int width, int height, boolean isBoundBottom, boolean roundCornerC, boolean roundCornerD) {
+        y = y + height;
+
+        int[] rect = new int[4];
+
+        rect[0] = x;
+        rect[1] = y;
+        rect[2] = x + width;
+        rect[3] = y + lineWidth;
+
+        if (roundCornerC) {
+            rect[0] -= lineWidth;
+        }
+
+        if (roundCornerD) {
+            rect[2] += lineWidth;
+        }
 
         ArrayList<Object> bottom = new ArrayList<>();
         bottom.add(rect);

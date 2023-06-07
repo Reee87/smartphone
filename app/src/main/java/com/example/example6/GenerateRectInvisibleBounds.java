@@ -2,12 +2,12 @@ package com.example.example6;
 
 import java.util.ArrayList;
 
-public class GenerateRectBounds {
+public class GenerateRectInvisibleBounds {
     ArrayList<Object> bounds;
     int coefficient;
     int lineWidth;
 
-    public GenerateRectBounds(int startX, int startY, int coefficient, int lineWidth) {
+    public GenerateRectInvisibleBounds(int startX, int startY, int coefficient, int lineWidth) {
         this.bounds = new ArrayList<>();
         this.coefficient = coefficient;
         this.lineWidth = lineWidth;
@@ -22,44 +22,53 @@ public class GenerateRectBounds {
 
         // Cell 19
         rectangle = rectangleArrayList.get(14);
-        bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, false, true, true));
+        bounds.add(rectangleBounds.generateTopBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), false));
+        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), false));
+        bounds.add(rectangleBounds.generateLeftBound(rectangle.getX(), rectangle.getY(), rectangle.getHeight(), true));
+        bounds.add(rectangleBounds.generateRightBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), true, 100));
 
         // Cell 11
         rectangle = rectangleArrayList.get(8);
-        bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, false, true, true));
+        bounds.add(rectangleBounds.generateTopBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), false));
+        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), false));
+        bounds.add(rectangleBounds.generateLeftBound(rectangle.getX(), rectangle.getY(), rectangle.getHeight(), true, 100));
+        bounds.add(rectangleBounds.generateRightBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), true));
 
         // Cell 10
         rectangle = rectangleArrayList.get(7);
-        bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, false, true, true));
+        bounds.add(rectangleBounds.generateTopBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), false));
+        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), false));
+        bounds.add(rectangleBounds.generateLeftBound(rectangle.getX(), rectangle.getY(), rectangle.getHeight(), true, 100));
+        bounds.add(rectangleBounds.generateRightBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), true));
 
         // Cell 12
         rectangle = rectangleArrayList.get(9);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, false, false, true));
+                false, false, false, true,
+                false, true, false, false));
 
         x = rectangle.getX();
         y = rectangle.getY();
-        bounds.add(rectangleBounds.generateTopBound(x+(int)(coefficient*(1.24)), y, (int)(coefficient*(3.57-1.24)), true));
+        bounds.add(rectangleBounds.generateTopBound(x+(int)(coefficient*(1.24)), y, (int)(coefficient*(3.57-1.24)), true, false, true));
         bounds.add(rectangleBounds.generateLeftBound(x, y, (int)(coefficient*(3.26+2.75-1.56-2.54)), true));
 
         // Cell 9
         rectangle = rectangleArrayList.get(6);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
+                false, false, false, true,
                 false, false, false, true));
 
         x = rectangle.getX();
         y = rectangle.getY();
         bounds.add(rectangleBounds.generateLeftBound(x, y+(int) (coefficient*(2.75-(3.26+2.75-1.56-2.54))),
                 (int)(coefficient*(3.26+2.75-1.56-2.54)), true));
-        bounds.add(rectangleBounds.generateBottomBound(x+(int)(coefficient*(1.24)), y, (int)(coefficient*(3.57-1.24)), (int)(coefficient*2.75), true));
+        bounds.add(rectangleBounds.generateBottomBound(x+(int)(coefficient*(1.24)), y, (int)(coefficient*(3.57-1.24)), (int)(coefficient*2.75), true, false, true));
 
         // Cell 13
         rectangle = rectangleArrayList.get(10);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, true, false, true));
+                false, true, false, true,
+                false, false, true, true));
 
         x = rectangle.getX();
         y = rectangle.getY();
@@ -68,7 +77,8 @@ public class GenerateRectBounds {
         // Cell 8
         rectangle = rectangleArrayList.get(5);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, false, false, true));
+                true, false, false, true,
+                true, true, false, false));
 
         x = rectangle.getX();
         y = rectangle.getY();
@@ -77,12 +87,14 @@ public class GenerateRectBounds {
         // Cell 14
         rectangle = rectangleArrayList.get(11);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, true, false, false));
+                true, true, false, false,
+                false, false, false, false));
 
         // Cell 3
         rectangle = rectangleArrayList.get(2);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, false, false, false));
+                true, false, false, false,
+                false, false, false, false));
 
         x = rectangle.getX();
         y = rectangle.getY();
@@ -93,12 +105,14 @@ public class GenerateRectBounds {
         // Cell 15
         rectangle = rectangleArrayList.get(12);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, true, false, false));
+                true, true, false, false,
+                false, false, false, false));
 
         // Cell 2
         rectangle = rectangleArrayList.get(1);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, false, false, false));
+                true, false, false, false,
+                false, false, false, false));
 
         x = rectangle.getX();
         y = rectangle.getY();
@@ -109,30 +123,35 @@ public class GenerateRectBounds {
         // Cell 16
         rectangle = rectangleArrayList.get(13);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, true, true, false));
+                true, true, true, false,
+                true, false, true, false));
 
         // Cell 1
         rectangle = rectangleArrayList.get(0);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, true, true, false));
+                true, true, true, false,
+                true, false, true, false));
 
         // Cell 7
         rectangle = rectangleArrayList.get(4);
-        bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, true, true, true));
+        bounds.add(rectangleBounds.generateTopBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), false));
+        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), true, true, false));
+        bounds.add(rectangleBounds.generateLeftBound(rectangle.getX(), rectangle.getY(), rectangle.getHeight(), true));
+        bounds.add(rectangleBounds.generateRightBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(), true, 4));
 
         // Cell 4, 5, 6
         rectangle = rectangleArrayList.get(3);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, true, true, true));
+                false, true, true, true,
+                false, false, true, true));
 
         // Cell 17
         rectangle = rectangleArrayList.get(7);
-        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX()-(int)(coefficient*(1.79-1.24)), rectangle.getY(), (int)(coefficient*(1.79-1.24)), rectangle.getHeight(), true, 4));
+        bounds.add(rectangleBounds.generateTopBound(rectangle.getBottomLeftX()-(int)(coefficient*(1.79-1.24)), rectangle.getBottomLeftY(), (int)(coefficient*(1.79-1.24)), true));
 
         // Cell 18
         rectangle = rectangleArrayList.get(8);
-        bounds.add(rectangleBounds.generateTopBound(rectangle.getX()-(int)(coefficient*(1.79-1.24)), rectangle.getY(), (int)(coefficient*(1.79-1.24)), true, 4));
+        bounds.add(rectangleBounds.generateBottomBound(rectangle.getX()-(int)(coefficient*(1.79-1.24)), rectangle.getY(), (int)(coefficient*(1.79-1.24)), 0, true));
     }
 
     public ArrayList<Object> getBounds() {

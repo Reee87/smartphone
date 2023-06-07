@@ -82,4 +82,20 @@ public class Parallelogram extends Shape {
     public int getBottomLeftY() {
         return bottomLeftY;
     }
+
+    public int getTopRightX() {
+        return topLeftX+lineWidth;
+    }
+
+    public int getTopRightY() {
+        return topLeftY;
+    }
+
+    public int getBottomRightX() {
+        return bottomLeftX+lineWidth;
+    }
+
+    public int getBottomRightY() {
+        return bottomLeftY;
+    }
 }
