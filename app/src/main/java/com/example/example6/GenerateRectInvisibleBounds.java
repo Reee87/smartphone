@@ -61,7 +61,7 @@ public class GenerateRectInvisibleBounds {
         x = rectangle.getX();
         y = rectangle.getY();
         bounds.add(rectangleBounds.generateLeftBound(x, y+(int) (coefficient*(2.75-(3.26+2.75-1.56-2.54))),
-                (int)(coefficient*(3.26+2.75-1.56-2.54)), true));
+                (int)(coefficient*(3.26+2.75-1.56-2.54)), true, 35));
         bounds.add(rectangleBounds.generateBottomBound(x+(int)(coefficient*(1.24)), y, (int)(coefficient*(3.57-1.24)), (int)(coefficient*2.75), true, false, true));
 
         // Cell 13
@@ -98,9 +98,9 @@ public class GenerateRectInvisibleBounds {
 
         x = rectangle.getX();
         y = rectangle.getY();
-        bounds.add(rectangleBounds.generateBottomBound(x, y, (int)(coefficient*(4.80-0.99)/2), (int)(coefficient*2.54), true));
+        bounds.add(rectangleBounds.generateBottomBound(x, y, (int)(coefficient*(4.80-0.99)/2), (int)(coefficient*2.54), true, 35));
         bounds.add(rectangleBounds.generateBottomBound(x+(int) (coefficient*((4.8-0.99)/2+0.99)), y,
-                (int)(coefficient*(4.80-0.99)/2), (int)(coefficient*2.54), true));
+                (int)(coefficient*(4.80-0.99)/2), (int)(coefficient*2.54), true, 35));
 
         // Cell 15
         rectangle = rectangleArrayList.get(12);
@@ -116,9 +116,9 @@ public class GenerateRectInvisibleBounds {
 
         x = rectangle.getX();
         y = rectangle.getY();
-        bounds.add(rectangleBounds.generateBottomBound(x, y, (int)(coefficient*(4.8-1.01)/2), (int)(coefficient*2.54), true));
+        bounds.add(rectangleBounds.generateBottomBound(x, y, (int)(coefficient*(4.8-1.01)/2), (int)(coefficient*2.54), true, 35));
         bounds.add(rectangleBounds.generateBottomBound(x+(int) (coefficient*((4.8-1.01)/2+1.01)), y,
-                (int)(coefficient*(4.8-1.01)/2), (int)(coefficient*2.54), true));
+                (int)(coefficient*(4.8-1.01)/2), (int)(coefficient*2.54), true, 35));
 
         // Cell 16
         rectangle = rectangleArrayList.get(13);

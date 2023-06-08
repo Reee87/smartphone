@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     /**
      * The text view.
      */
-    private TextView textView, textCellNum;
+    private TextView textStep, textRotation, textCellNum;
     /**
      * The shape.
      */
@@ -75,6 +75,8 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private int coefficient = 35;
     private float[] rotationMatrix = new float[9];
     private float[] orientationAngles = new float[3];
+    private float azimuth = 0;
+    private boolean isInitialized = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +89,8 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         down = (Button) findViewById(R.id.button4);
 
         // set the text view
-        textView = (TextView) findViewById(R.id.textView1);
+        textStep = (TextView) findViewById(R.id.textView);
+        textRotation = (TextView) findViewById(R.id.textView1);
         textCellNum = (TextView) findViewById(R.id.cellNum);
 
         // set listeners
@@ -100,13 +103,13 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
             stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_FASTEST);
         }
 
         //set rotation vector
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) != null) {
             rotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            sensorManager.registerListener(this, rotationVector, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(this, rotationVector, SensorManager.SENSOR_DELAY_FASTEST);
         }
 
         // get the screen dimensions
@@ -153,7 +156,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             }
         }
 
-        GenerateRectInvisibleBounds generateRectInvisibleBounds = new GenerateRectInvisibleBounds(startX, startY, coefficient, 35);
+        GenerateRectInvisibleBounds generateRectInvisibleBounds = new GenerateRectInvisibleBounds(startX, startY, coefficient, 50);
         ArrayList<Object> bounds1 = generateRectInvisibleBounds.getBounds();
 
         for(Object bound: bounds1) {
@@ -312,7 +315,15 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             float stepCount = sensorEvent.values[0];
-            textView.setText("\n\tStep Counter: " + (int) stepCount);
+            textStep.setText("\n\tStep Counter: " + (int) stepCount);
+
+            if (!isInitialized) {
+                isInitialized = true;
+            } else {
+                moveParticles(stepLength, (int) azimuth);
+            }
+
+            azimuth = 0;
         }
 
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
@@ -324,7 +335,14 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
             float rollDegrees = (float) Math.toDegrees(orientationAngles[2]);
 
-            textView.setText(
+            if (azimuth == 0) {
+                azimuth = azimuthDegrees;
+            } else {
+                azimuth += azimuthDegrees;
+                azimuth /= 2;
+            }
+
+            textRotation.setText(
                     "\n\tazimuthDegrees: " + azimuthDegrees +
                             "\n\tpitchDegrees: " + pitchDegrees +
                             "\n\trollDegrees: " + rollDegrees);
@@ -334,5 +352,47 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    public void moveParticles(int distance, int direction) {
+        Rect r = drawable.getBounds();
+        int left = r.left, top = r.top, right = r.right, bottom = r.bottom;
+        double radians = Math.toRadians(direction);
+        double sinValue = Math.sin(radians);
+        double cosValue = Math.cos(radians);
+
+        left += (int) (distance * cosValue);
+        right += (int) (distance * cosValue);
+        top -= (int) (distance * sinValue);
+        bottom -= (int) (distance * sinValue);
+
+        drawable.setBounds(left, top, right, bottom);
+
+        particlesDrawable.move(distance, direction);
+        particlesDrawable.checkCollision();
+        particlesDrawable.resample();
+        textCellNum.setText("Cell Number = " + particlesDrawable.checkCellNum());
+
+        // redrawing of the object
+        canvas.drawColor(Color.WHITE);
+        for(ShapeDrawable wall : wallsInvisible) {
+            wall.getPaint().setColor(Color.GRAY);
+            wall.draw(canvas);
+        }
+        for(ShapeDrawable wall : wallsNotBound) {
+            wall.getPaint().setColor(Color.BLUE);
+            wall.draw(canvas);
+        }
+        for(ShapeDrawable wall : wallsBound) {
+            wall.getPaint().setColor(Color.RED);
+            wall.draw(canvas);
+        }
+        for(Parallelogram p : parallelograms) {
+            Paint paint = new Paint();
+            paint.setColor(Color.RED);
+            p.draw(canvas, paint);
+        }
+        particlesDrawable.draw(canvas);
+        drawable.draw(canvas);
     }
 }

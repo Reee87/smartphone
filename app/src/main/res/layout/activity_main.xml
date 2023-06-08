@@ -55,6 +55,16 @@
         android:layout_height="60dp"
         android:layout_alignBottom="@+id/canvas"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="200dp"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_alignBottom="@+id/canvas"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="300dp"
         android:text="" />
 
     <TextView
