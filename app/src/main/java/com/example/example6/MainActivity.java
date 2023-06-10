@@ -2,6 +2,7 @@ package com.example.example6;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,6 +26,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +82,11 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private float[] orientationAngles = new float[3];
     private float azimuth = 0;
     private boolean isInitialized = false;
+
+    StepCounter stepCounter1;
+
+    int stepCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +121,17 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             rotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
             sensorManager.registerListener(this, rotationVector, SensorManager.SENSOR_DELAY_FASTEST);
         }
+
+        //if the default accelerometer exists
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            // set accelerometer
+            Sensor accelerometer = sensorManager
+                    .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            // register 'this' as a listener that updates values. Each time a sensor value changes,
+            // the method 'onSensorChanged()' is called.
+            sensorManager.registerListener(this, accelerometer,
+                    SensorManager.SENSOR_DELAY_FASTEST);
+        }  // No accelerometer!
 
         // get the screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
@@ -210,6 +231,14 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         particlesDrawable = new ParticlesDrawable(dotSize, coefficient, startX, startY, lineWidth);
         particlesDrawable.draw(canvas);
         particlesDrawable.setBounds(wallsInvisible, parallelograms);
+
+        stepCounter1 = new StepCounter();
+        try {
+            stepCounter1.collectReferenceSignal(readFromValueFile("reference_data.csv"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
@@ -313,18 +342,18 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            float stepCount = sensorEvent.values[0];
-            textStep.setText("\n\tStep Counter: " + (int) stepCount);
-
-            if (!isInitialized) {
-                isInitialized = true;
-            } else {
-                moveParticles(stepLength, (int) azimuth);
-            }
-
-            azimuth = 0;
-        }
+//        if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+//            float stepCount = sensorEvent.values[0];
+//            textStep.setText("\n\tStep Counter: " + (int) stepCount);
+//
+//            if (!isInitialized) {
+//                isInitialized = true;
+//            } else {
+//                moveParticles(stepLength, (int) azimuth);
+//            }
+//
+//            azimuth = 0;
+//        }
 
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorEvent.values);
@@ -332,8 +361,8 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
             // Convert the orientation angles from radians to degrees
             float azimuthDegrees = (float) Math.toDegrees(orientationAngles[0]);
-            float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
-            float rollDegrees = (float) Math.toDegrees(orientationAngles[2]);
+//            float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
+//            float rollDegrees = (float) Math.toDegrees(orientationAngles[2]);
 
             if (azimuth == 0) {
                 azimuth = azimuthDegrees;
@@ -343,11 +372,28 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             }
 
             textRotation.setText(
-                    "\n\tazimuthDegrees: " + azimuthDegrees +
-                            "\n\tpitchDegrees: " + pitchDegrees +
-                            "\n\trollDegrees: " + rollDegrees);
+                    "\n\tazimuthDegrees: " + azimuthDegrees);
+//                            "\n\tpitchDegrees: " + pitchDegrees +
+//                            "\n\trollDegrees: " + rollDegrees);
+        }
+
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float aX = sensorEvent.values[0];
+            float aY = sensorEvent.values[1];
+            float aZ = sensorEvent.values[2];
+
+            stepCounter1.processIncomingData(aY);
+
+            if (stepCount != stepCounter1.getStepCount()) {
+                        moveParticles(stepLength, (int) azimuth);
+                        textStep.setText("\n\tStep Counter: " + stepCounter1.getStepCount() +
+                        "\n\t direction " + azimuth);
+                        azimuth = 0;
+                        stepCount = stepCounter1.getStepCount();
+            }
         }
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
@@ -394,5 +440,26 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         }
         particlesDrawable.draw(canvas);
         drawable.draw(canvas);
+    }
+
+    private float[] readFromValueFile(String fileName) throws IOException {
+        AssetManager assetManager = getAssets();
+        InputStream inputStream = assetManager.open(fileName);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        String line;
+        int row = 0;
+        float[] value = new float[150];
+        while ((line = bufferedReader.readLine()) != null) {
+            value[row] = Float.parseFloat(line);
+            row++;
+        }
+
+        bufferedReader.close();
+        inputStreamReader.close();
+        inputStream.close();
+
+        return value;
     }
 }
