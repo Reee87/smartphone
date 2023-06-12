@@ -199,4 +199,52 @@ public class RectangleBounds {
 
         return right;
     }
+
+    public ArrayList<Object> generateTopBound(int x, int y, int width, boolean isBoundTop, boolean roundCornerA, boolean roundCornerB, int newLineWidth) {
+        int[] rect = new int[4];
+
+        rect[0] = x;
+        rect[1] = y - newLineWidth;
+        rect[2] = x + width;
+        rect[3] = y;
+
+        if (roundCornerA) {
+            rect[0] -= newLineWidth;
+        }
+
+        if (roundCornerB) {
+            rect[2] += newLineWidth;
+        }
+
+        ArrayList<Object> top = new ArrayList<>();
+        top.add(rect);
+        top.add(isBoundTop);
+
+        return top;
+    }
+
+    public ArrayList<Object> generateBottomBound(int x, int y, int width, int height, boolean isBoundBottom, boolean roundCornerC, boolean roundCornerD, int newLineWidth) {
+        y = y + height;
+
+        int[] rect = new int[4];
+
+        rect[0] = x;
+        rect[1] = y;
+        rect[2] = x + width;
+        rect[3] = y + newLineWidth;
+
+        if (roundCornerC) {
+            rect[0] -= newLineWidth;
+        }
+
+        if (roundCornerD) {
+            rect[2] += newLineWidth;
+        }
+
+        ArrayList<Object> bottom = new ArrayList<>();
+        bottom.add(rect);
+        bottom.add(isBoundBottom);
+
+        return bottom;
+    }
 }

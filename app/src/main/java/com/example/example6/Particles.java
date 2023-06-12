@@ -7,7 +7,7 @@ import java.util.Random;
 public class Particles {
     private ArrayList<Particle> particles;
     private int length;
-    private float density = 0.15F;
+    private float density = 0.1F;
     private int coefficient;
     private int startX;
     private int startY;

@@ -37,8 +37,10 @@ public class Rectangles {
         // Cell 4, 5, 6
         x = startX + (int) (coefficient*(1.79/2-2.3));
         y = startY + (int) (coefficient*(-2.73/2-4.22-3.81-2.75-3.26+1.56+2.54));
-        width = (int) (coefficient*2.30);
-        height = (int) (coefficient*4.30);
+//        width = (int) (coefficient*2.30);
+//        height = (int) (coefficient*4.30);
+        width = 0;
+        height = 0;
         cellNum = 4;
         rectangles.add(new Rectangle(x, y, width, height, cellNum));
 

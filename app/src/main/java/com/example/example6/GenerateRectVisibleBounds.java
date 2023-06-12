@@ -110,7 +110,7 @@ public class GenerateRectVisibleBounds {
         // Cell 2
         rectangle = rectangleArrayList.get(1);
         bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                true, false, false, false,
+                true, true, false, false,
                 false, false, false, false));
 
         x = rectangle.getX();
@@ -138,10 +138,10 @@ public class GenerateRectVisibleBounds {
                 false, false, true, false));
 
         // Cell 4, 5, 6
-        rectangle = rectangleArrayList.get(3);
-        bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
-                false, true, true, true,
-                false, false, true, true));
+//        rectangle = rectangleArrayList.get(3);
+//        bounds.addAll(rectangleBounds.generateBound(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight(),
+//                false, true, true, true,
+//                false, false, true, true));
 
         // Cell 17
         rectangle = rectangleArrayList.get(7);

@@ -81,7 +81,12 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private float[] rotationMatrix = new float[9];
     private float[] orientationAngles = new float[3];
     private float azimuth = 0;
+
     private boolean isInitialized = false;
+
+    private ArrayListLock direction = new ArrayListLock();
+
+    int BoundaryWidth = 200;
 
     StepCounter stepCounter1;
 
@@ -177,7 +182,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             }
         }
 
-        GenerateRectInvisibleBounds generateRectInvisibleBounds = new GenerateRectInvisibleBounds(startX, startY, coefficient, 50);
+        GenerateRectInvisibleBounds generateRectInvisibleBounds = new GenerateRectInvisibleBounds(startX, startY, coefficient, BoundaryWidth);
         ArrayList<Object> bounds1 = generateRectInvisibleBounds.getBounds();
 
         for(Object bound: bounds1) {
@@ -361,20 +366,21 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
             // Convert the orientation angles from radians to degrees
             float azimuthDegrees = (float) Math.toDegrees(orientationAngles[0]);
-//            float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
-//            float rollDegrees = (float) Math.toDegrees(orientationAngles[2]);
+            float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
+            float rollDegrees = (float) Math.toDegrees(orientationAngles[2]);
 
-            if (azimuth == 0) {
-                azimuth = azimuthDegrees;
-            } else {
-                azimuth += azimuthDegrees;
-                azimuth /= 2;
-            }
+//            if (azimuth == 0) {
+//                azimuth = azimuthDegrees;
+//            } else {
+//                azimuth += azimuthDegrees;
+//                azimuth /= 2;
+//            }
+            direction.addItem(azimuthDegrees);
 
             textRotation.setText(
-                    "\n\tazimuthDegrees: " + azimuthDegrees);
-//                            "\n\tpitchDegrees: " + pitchDegrees +
-//                            "\n\trollDegrees: " + rollDegrees);
+                    "\n\tazimuthDegrees: " + azimuthDegrees +
+                            "\n\tpitchDegrees: " + pitchDegrees +
+                            "\n\trollDegrees: " + rollDegrees);
         }
 
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -385,11 +391,17 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             stepCounter1.processIncomingData(aY);
 
             if (stepCount != stepCounter1.getStepCount()) {
-                        moveParticles(stepLength, (int) azimuth);
-                        textStep.setText("\n\tStep Counter: " + stepCounter1.getStepCount() +
-                        "\n\t direction " + azimuth);
-                        azimuth = 0;
-                        stepCount = stepCounter1.getStepCount();
+                float sum = 0;
+                for (int i = 0; i < direction.size(); i++) {
+                    sum += direction.getItem(i);
+                }
+                azimuth = sum / (float) direction.size();
+                direction.clear();
+                moveParticles(stepLength, (int) azimuth);
+                textStep.setText("\n\tstep counter: " + stepCounter1.getStepCount() +
+                "\n\tdirection " + azimuth);
+                azimuth = 0;
+                stepCount = stepCounter1.getStepCount();
             }
         }
     }
