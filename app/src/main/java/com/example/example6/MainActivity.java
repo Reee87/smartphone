@@ -91,7 +91,6 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     StepCounter stepCounter1;
 
     int stepCount = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

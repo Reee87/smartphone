@@ -48,6 +48,7 @@ public class ParticlesDrawable {
 
     public void move(int distance, int direction) {
         particles.move(distance, direction);
+        synchronize();
     }
 
     public void checkCollision() {
