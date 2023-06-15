@@ -78,6 +78,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     int windowSize = 20;
     int sampleNum = 0;
 
+    int predict = 0;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -164,7 +166,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                     c14.setRating(0.0f);
                     c15.setRating(0.0f);
                     c16.setRating(0.0f);
-                    int predict = 0;
+
                     wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                     wifiManager.startScan();
                     List<ScanResult> scanResults = wifiManager.getScanResults();
@@ -178,6 +180,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                             wifiData.add(wifi);
                         }
                         formatWifiData(wifiData);
+                        //debugInfo.setText(wifiData.get(0)[0] +" + " + wifiData.get(0)[1] + " + " + wifiData.get(1)[0] +" + " + wifiData.get(1)[1]);
 //                        wifiData.get(0)[0] = "d0_4d_c6_f2_43";
 //                        wifiData.get(0)[1] = "61";
 //                        wifiData.get(1)[0] = "d0_4d_c6_f2_fc";
@@ -187,7 +190,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 
                         try {
-                            if (classify(predict, wifiData, indexList, valueList)) {
+                            if (classify(wifiData, indexList, valueList)) {
                                 switch (predict) {
                                     case 1:
                                         c1.setRating(10.0f);
@@ -257,7 +260,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         });
     }
 
-    private boolean classify(int predict, ArrayList<String[]> wifiData, Map<String,int[]> indexList, Map<String,float[][]> valueList) throws Exception {
+    private boolean classify(ArrayList<String[]> wifiData, Map<String,int[]> indexList, Map<String,float[][]> valueList) throws Exception {
         float[] prior = new float[cellNum];
         Arrays.fill(prior, (float) (1.0 /cellNum));
         for (int i = 0; i < wifiData.size(); i++) {
@@ -276,8 +279,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 int index = Integer.valueOf(wifiData.get(i)[1]) - indexList.get(bssid)[0];
                 float[] prob = extractCol(table, index);
                 float[] post = dotProduct(prob, prior);
-                //debugInfo.setText(Integer.toString(index) + "+" + Float.toString(prob[9]) + "+" + Float.toString(post[9]));
-
+//                debugInfo.setText(Integer.toString(index) + "+" + Float.toString(prob[9]) + "+" + Float.toString(post[9]));
                 if (arraySum(post) != 0) {
                     prior = arrayDivide(post,arraySum(post));
                 }
@@ -285,7 +287,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                     break;
                 }
 
-                if (findMax(prior, predict)) {
+                if (findMax(prior)) {
                     return true;
                 }
             }
@@ -296,7 +298,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         return false;
     }
 
-    private boolean findMax(float[] prior, int predict) {
+    private boolean findMax(float[] prior) {
         for (int i = 0; i < prior.length; i++) {
             if (prior[i] > 0.95 ) {
                 predict = i;
@@ -343,9 +345,9 @@ public class MainActivity extends Activity implements SensorEventListener {
             String indexFileName = "rssi_table/" + bssid + "_index.csv";
             String valueFileName = "rssi_table/" + bssid + "_data.csv";
             int[] index = readFromIndexFile(indexFileName);
-            indexList.put(bssid,index);
-            float[][] value = readFromValueFile(valueFileName,index);
-            valueList.put(bssid,value);
+            indexList.put(bssid, index);
+            float[][] value = readFromValueFile(valueFileName, index);
+            valueList.put(bssid, value);
         }
     }
 
