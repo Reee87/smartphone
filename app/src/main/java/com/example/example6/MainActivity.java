@@ -69,15 +69,19 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
     private ArrayList<Parallelogram> parallelograms;
     private ParticlesDrawable particlesDrawable;
-
-    private int dotSize = 6;
-    private int lineWidth = 4;
-    int stepLength = 25;
     private int startX;
     private int startY;
     // width = 17.97
     // height = 30.81
-    private int coefficient = 35;
+
+    // width = 1080
+    // height = 2167
+    private int coefficient = 50;
+
+    private int dotSize = 6;
+    private int lineWidth = 4;
+    int stepLength = (int) ((float)coefficient*0.7);
+
     private float[] rotationMatrix = new float[9];
     private float[] orientationAngles = new float[3];
     private float azimuth = 0;
@@ -86,7 +90,11 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
     private ArrayListLock direction = new ArrayListLock();
 
-    int BoundaryWidth = 200;
+    int BoundaryWidth = 1000;
+
+    int samplingRate = 25000;
+
+    int directionBias = 0;
 
     StepCounter stepCounter1;
 
@@ -117,13 +125,13 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
             stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(this, stepCounter, samplingRate);
         }
 
         //set rotation vector
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) != null) {
             rotationVector = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            sensorManager.registerListener(this, rotationVector, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(this, rotationVector, samplingRate);
         }
 
         //if the default accelerometer exists
@@ -134,18 +142,18 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             // register 'this' as a listener that updates values. Each time a sensor value changes,
             // the method 'onSensorChanged()' is called.
             sensorManager.registerListener(this, accelerometer,
-                    SensorManager.SENSOR_DELAY_FASTEST);
+                    samplingRate);
         }  // No accelerometer!
 
         // get the screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int width = size.x; // width = 720
-        int height = size.y; // height = 1280
+        int width = size.x; // width = 1080
+        int height = size.y; // height = 2167
 
         // create a drawable object
-        startX = width/2-50;
+        startX = width/2-100;
         startY = height/2;
 
         drawable = new ShapeDrawable(new OvalShape());
@@ -318,7 +326,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
         particlesDrawable.checkCollision();
         particlesDrawable.resample();
-        textCellNum.setText("Cell Number = " + particlesDrawable.checkCellNum());
+        textCellNum.setText("\n\tcell number = " + particlesDrawable.checkCellNum());
 
         // redrawing of the object
         canvas.drawColor(Color.WHITE);
@@ -396,7 +404,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
                 }
                 azimuth = sum / (float) direction.size();
                 direction.clear();
-                moveParticles(stepLength, (int) azimuth);
+                moveParticles(stepLength, (int) azimuth - directionBias);
                 textStep.setText("\n\tstep counter: " + stepCounter1.getStepCount() +
                 "\n\tdirection " + azimuth);
                 azimuth = 0;
@@ -428,7 +436,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         particlesDrawable.move(distance, direction);
         particlesDrawable.checkCollision();
         particlesDrawable.resample();
-        textCellNum.setText("Cell Number = " + particlesDrawable.checkCellNum());
+        textCellNum.setText("\n\tcell number = " + particlesDrawable.checkCellNum());
 
         // redrawing of the object
         canvas.drawColor(Color.WHITE);

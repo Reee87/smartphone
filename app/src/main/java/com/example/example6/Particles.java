@@ -7,7 +7,7 @@ import java.util.Random;
 public class Particles {
     private ArrayList<Particle> particles;
     private int length;
-    private float density = 0.1F;
+    private float density = 0.15F;
     private int coefficient;
     private int startX;
     private int startY;
@@ -125,13 +125,13 @@ public class Particles {
 
     private int[] updateCoordinates(int distance, int direction) {
         int[] delta = new int[2];
-        distance += (int) (random.nextGaussian() * 3.5);
-        direction += (int) (random.nextGaussian() * 15);
+        distance += (int) (random.nextGaussian() * coefficient * 0.6 * 0.1);
+        direction += (int) (random.nextGaussian() * 45);
         double radians = Math.toRadians(direction);
         double sinValue = Math.sin(radians);
         double cosValue = Math.cos(radians);
         delta[0] = (int) (distance * cosValue);
-        delta[1] = - (int) (distance * sinValue);
+        delta[1] = (int) (distance * sinValue);
 
         return delta;
     }
@@ -146,20 +146,29 @@ public class Particles {
         }
 
         int currentLength = particles.size();
-        ArrayList<Particle> particles1 = (ArrayList<Particle>) particles.clone();
 
-        for (int i=0; i<length/currentLength-1; i++) {
-            particles.addAll(particles1);
-        }
-
-        currentLength = particles.size();
-
-        for (int i=0; i<length-currentLength; i++) {
+        while (currentLength < length) {
             int index = random.nextInt(currentLength);
             Particle particle = particles.get(index);
             Particle particle1 = new Particle(particle.getX(), particle.getY());
             particles.add(particle1);
+            currentLength = particles.size();
         }
+
+//        ArrayList<Particle> particles1 = (ArrayList<Particle>) particles.clone();
+//
+//        for (int i=0; i<length/currentLength-1; i++) {
+//            particles.addAll(particles1);
+//        }
+//
+//        currentLength = particles.size();
+//
+//        for (int i=0; i<length-currentLength; i++) {
+//            int index = random.nextInt(currentLength);
+//            Particle particle = particles.get(index);
+//            Particle particle1 = new Particle(particle.getX(), particle.getY());
+//            particles.add(particle1);
+//        }
 
         calculateAverage();
     }

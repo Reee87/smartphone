@@ -10,8 +10,8 @@ import java.util.Arrays;
 
 public class StepCounter {
     // Constants
-    private static final int WINDOW_SIZE = 150;  // Adjust the window size as needed
-    private static final float THRESHOLD = (float) 0.8; // Adjust the threshold as needed
+    private static final int WINDOW_SIZE = 30;  // Adjust the window size as needed
+    private static final float THRESHOLD = (float) 0.80; // Adjust the threshold as needed
 
     // Variables
     private float[] referenceSignal;
@@ -82,7 +82,7 @@ public class StepCounter {
             count++;
         }
 
-        if (count == 150) {
+        if (count == WINDOW_SIZE) {
         // Check if there is a peak within the window that exceeds the threshold
 
             if (isPeakWithinWindow(correlation, THRESHOLD)) {

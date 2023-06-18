@@ -102,7 +102,7 @@ public class ParticlesDrawable {
             Rect rect = new Rect();
             rectF1.roundOut(rect);
 //            parallelogramsRect.add(new Rect(rect.left, rect.top, rect.right+p.getPWidth(), rect.bottom));
-            parallelogramsRect.add(new Rect(0, rect.top, 720, rect.bottom));
+            parallelogramsRect.add(new Rect(0, rect.top, 1080, rect.bottom));
         }
     }
 
