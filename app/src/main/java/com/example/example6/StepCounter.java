@@ -1,17 +1,11 @@
 package com.example.example6;
 
-import android.content.res.AssetManager;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
 public class StepCounter {
     // Constants
     private static final int WINDOW_SIZE = 30;  // Adjust the window size as needed
-    private static final float THRESHOLD = (float) 0.80; // Adjust the threshold as needed
+    private float threshold; // Adjust the threshold as needed
 
     // Variables
     private float[] referenceSignal;
@@ -21,8 +15,9 @@ public class StepCounter {
 
     private int count;
 
-    public StepCounter() {
+    public StepCounter(float threshold) {
         // Initialize variables
+        this.threshold = threshold;
         referenceSignal = new float[WINDOW_SIZE];
         currentWindow = new RingBuffer<Float>(WINDOW_SIZE);
         stepCount = 0;
@@ -85,7 +80,7 @@ public class StepCounter {
         if (count == WINDOW_SIZE) {
         // Check if there is a peak within the window that exceeds the threshold
 
-            if (isPeakWithinWindow(correlation, THRESHOLD)) {
+            if (isPeakWithinWindow(correlation, threshold)) {
                 // Count a step
                 stepCount++;
             }
@@ -97,6 +92,11 @@ public class StepCounter {
     public int getStepCount() {
         return stepCount;
     }
+
+    public void decrease(int i) {
+        stepCount = i;
+    }
+
 
     private boolean isPeakWithinWindow(float[] window, float threshold) {
         // Check if there is a peak within the window that exceeds the threshold

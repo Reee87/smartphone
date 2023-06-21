@@ -81,7 +81,6 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
     private int dotSize = 6;
     private int lineWidth = 4;
     int stepLength = (int) ((float)coefficient*0.7);
-
     private float[] rotationMatrix = new float[9];
     private float[] orientationAngles = new float[3];
     private float azimuth = 0;
@@ -96,7 +95,8 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
 
     int directionBias = 0;
 
-    StepCounter stepCounter1;
+    StepCounter stepCounterY;
+    StepCounter stepCounterZ;
 
     int stepCount = 0;
     @Override
@@ -244,9 +244,11 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         particlesDrawable.draw(canvas);
         particlesDrawable.setBounds(wallsInvisible, parallelograms);
 
-        stepCounter1 = new StepCounter();
+        stepCounterY = new StepCounter((float) 0.80);
+        stepCounterZ = new StepCounter((float) 0.68);
         try {
-            stepCounter1.collectReferenceSignal(readFromValueFile("reference_data.csv"));
+            stepCounterY.collectReferenceSignal(readFromValueFile("reference_data_y.csv"));
+            stepCounterZ.collectReferenceSignal(readFromValueFile("reference_data_z.csv"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -371,6 +373,11 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorEvent.values);
             SensorManager.getOrientation(rotationMatrix, orientationAngles);
 
+//            SensorManager.getRotationMatrix(rotationMatrix, null, accelerometerData, magnetometerData);
+//            SensorManager.getOrientation(rotationMatrix, rotationVector);
+
+//            SensorManager.getRotationMatrix();
+
             // Convert the orientation angles from radians to degrees
             float azimuthDegrees = (float) Math.toDegrees(orientationAngles[0]);
             float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
@@ -395,24 +402,32 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             float aY = sensorEvent.values[1];
             float aZ = sensorEvent.values[2];
 
-            stepCounter1.processIncomingData(aY);
+            stepCounterZ.processIncomingData(aZ);
+            stepCounterY.processIncomingData(aY);
 
-            if (stepCount != stepCounter1.getStepCount()) {
-                float sum = 0;
-                for (int i = 0; i < direction.size(); i++) {
-                    sum += direction.getItem(i);
+            if (stepCount != stepCounterY.getStepCount()) {
+                if (stepCounterZ.getStepCount() == stepCounterY.getStepCount()) {
+                    float sum = 0;
+                    for (int i = 0; i < direction.size(); i++) {
+                        sum += direction.getItem(i);
+                    }
+                    azimuth = sum / (float) direction.size();
+                    direction.clear();
+                    moveParticles(stepLength, (int) azimuth - directionBias);
+                    textStep.setText("\n\tstep counter: " + stepCounterY.getStepCount() +
+                            "\n\tdirection " + azimuth);
+                    azimuth = 0;
+                    stepCount = stepCounterY.getStepCount();
+                } else if (stepCounterZ.getStepCount() > stepCounterY.getStepCount()) {
+                    stepCounterZ.decrease(stepCounterY.getStepCount());
                 }
-                azimuth = sum / (float) direction.size();
-                direction.clear();
-                moveParticles(stepLength, (int) azimuth - directionBias);
-                textStep.setText("\n\tstep counter: " + stepCounter1.getStepCount() +
-                "\n\tdirection " + azimuth);
-                azimuth = 0;
-                stepCount = stepCounter1.getStepCount();
+                else {
+                    stepCounterY.decrease(stepCounterZ.getStepCount());
+                }
+
             }
         }
     }
-
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
