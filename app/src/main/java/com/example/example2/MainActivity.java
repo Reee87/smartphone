@@ -12,6 +12,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -30,55 +31,33 @@ import java.util.Map;
 /**
  * Smart Phone Sensing Example 2. Working with sensors.
  */
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends Activity implements View.OnClickListener {
     public static final int cellNum = 16;
 
-    /**
-     * The sensor manager object.
-     */
-    private SensorManager sensorManager;
-    /**
-     * The accelerometer.
-     */
-    private Sensor accelerometer;
     /**
      * The wifi manager.
      */
     private WifiManager wifiManager;
-    /**
-     * The wifi info.
-     */
-    private WifiInfo wifiInfo;
 
-    /**
-     * Text fields to show the sensor values.
-     */
-    private TextView activity;
 
     Button start;
 
     private TextView debugInfo;
 
-    RatingBar c1,c2,c3,c4;
-    RatingBar c5,c6,c7,c8;
-    RatingBar c9,c10,c11,c12;
-    RatingBar c13,c14,c15,c16;
+    RatingBar c1, c2, c3, c4;
+    RatingBar c5, c6, c7, c8;
+    RatingBar c9, c10, c11, c12;
+    RatingBar c13, c14, c15, c16;
 
-    ArrayList<String> Bssid = new ArrayList<>();
     ArrayList<String> bssidList = new ArrayList<>();
-    List<ScanResult> scanResults;
-    ArrayList<String[]> wifiData;
+    ArrayListLock wifiData;
 
     Map<String, int[]> indexList;
     Map<String, float[][]> valueList;
     int wifiDataLength;
 
-    int threads = 0;
-
-    int windowSize = 20;
-    int sampleNum = 0;
-
     int predict = 0;
+    String information;
 
 
     @SuppressLint("MissingInflatedId")
@@ -95,7 +74,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         indexList = new HashMap<>();
         valueList = new HashMap<>();
 
-        wifiData = new ArrayList<>();
+        wifiData = new ArrayListLock();
         wifiDataLength = 0;
 
 
@@ -119,160 +98,142 @@ public class MainActivity extends Activity implements SensorEventListener {
         c15 = (RatingBar) findViewById(R.id.ratingBar15);
         c16 = (RatingBar) findViewById(R.id.ratingBar16);
 
-
         readBssid(bssidList);
 
         try {
-            readRssiTables(bssidList,indexList,valueList);
+            readRssiTables(bssidList, indexList, valueList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-         //Set the sensor manager
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-
-         //if the default accelerometer exists
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
-            // set accelerometer
-            accelerometer = sensorManager
-                    .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            // register 'this' as a listener that updates values. Each time a sensor value changes,
-            // the method 'onSensorChanged()' is called.
-            sensorManager.registerListener(this, accelerometer,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        }  // No accelerometer!
-
         // Set the wifi manager
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-        start.setOnClickListener(view -> {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    c1.setRating(0.0f);
-                    c2.setRating(0.0f);
-                    c3.setRating(0.0f);
-                    c4.setRating(0.0f);
-                    c5.setRating(0.0f);
-                    c6.setRating(0.0f);
-                    c7.setRating(0.0f);
-                    c8.setRating(0.0f);
-                    c9.setRating(0.0f);
-                    c10.setRating(0.0f);
-                    c11.setRating(0.0f);
-                    c12.setRating(0.0f);
-                    c13.setRating(0.0f);
-                    c14.setRating(0.0f);
-                    c15.setRating(0.0f);
-                    c16.setRating(0.0f);
-
-                    wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                    wifiManager.startScan();
-                    List<ScanResult> scanResults = wifiManager.getScanResults();
-                    if (wifiDataChange(wifiData, scanResults, wifiDataLength)) {
-                        wifiDataLength = scanResults.size();
-                        wifiData.clear();
-                        for (ScanResult scanResult : scanResults) {
-                            String[] wifi = new String[2];
-                            wifi[0] = scanResult.BSSID;
-                            wifi[1] = String.valueOf(scanResult.level);
-                            wifiData.add(wifi);
-                        }
-                        formatWifiData(wifiData);
-                        //debugInfo.setText(wifiData.get(0)[0] +" + " + wifiData.get(0)[1] + " + " + wifiData.get(1)[0] +" + " + wifiData.get(1)[1]);
-//                        wifiData.get(0)[0] = "d0_4d_c6_f2_43";
-//                        wifiData.get(0)[1] = "61";
-//                        wifiData.get(1)[0] = "d0_4d_c6_f2_fc";
-//                        wifiData.get(1)[1] = "62";
-//                        wifiData.get(2)[0] = "d0_4d_c6_f2_fc";
-//                        wifiData.get(2)[1] = "62";
-
-
-                        try {
-                            if (classify(wifiData, indexList, valueList)) {
-                                switch (predict) {
-                                    case 1:
-                                        c1.setRating(10.0f);
-                                        break;
-                                    case 2:
-                                        c2.setRating(10.0f);
-                                        break;
-                                    case 3:
-                                        c3.setRating(10.0f);
-                                        break;
-                                    case 4:
-                                        c4.setRating(10.0f);
-                                        break;
-                                    case 5:
-                                        c5.setRating(10.0f);
-                                        break;
-                                    case 6:
-                                        c6.setRating(10.0f);
-                                        break;
-                                    case 7:
-                                        c7.setRating(10.0f);
-                                        break;
-                                    case 8:
-                                        c8.setRating(10.0f);
-                                        break;
-                                    case 9:
-                                        c9.setRating(10.0f);
-                                        break;
-                                    case 10:
-                                        c10.setRating(10.0f);
-                                        break;
-                                    case 11:
-                                        c11.setRating(10.0f);
-                                        break;
-                                    case 12:
-                                        c12.setRating(10.0f);
-                                        break;
-                                    case 13:
-                                        c13.setRating(10.0f);
-                                        break;
-                                    case 14:
-                                        c14.setRating(10.0f);
-                                        break;
-                                    case 15:
-                                        c15.setRating(10.0f);
-                                        break;
-                                    case 16:
-                                        c16.setRating(10.0f);
-                                        break;
-                                    default:
-                                }
-                            }
-                            else {
-                                //Toast.makeText(getApplicationContext(), "Can not classify, please scan again! " , Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-
-
-                    }
-                    else {
-                        //Toast.makeText(getApplicationContext(), "Same data, please scan again! " , Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }).start();
-        });
+        start.setOnClickListener(this);
     }
 
-    private boolean classify(ArrayList<String[]> wifiData, Map<String,int[]> indexList, Map<String,float[][]> valueList) throws Exception {
+    @Override
+    public void onClick(View view) {
+        new Thread(() -> {
+            runOnUiThread(() -> debugInfo.setText("\n\tClick!"));
+
+        c1.setRating(0.0f);
+        c2.setRating(0.0f);
+        c3.setRating(0.0f);
+        c4.setRating(0.0f);
+        c5.setRating(0.0f);
+        c6.setRating(0.0f);
+        c7.setRating(0.0f);
+        c8.setRating(0.0f);
+        c9.setRating(0.0f);
+        c10.setRating(0.0f);
+        c11.setRating(0.0f);
+        c12.setRating(0.0f);
+        c13.setRating(0.0f);
+        c14.setRating(0.0f);
+        c15.setRating(0.0f);
+        c16.setRating(0.0f);
+
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.startScan();
+        List<ScanResult> scanResults = wifiManager.getScanResults();
+        ArrayList<String[]> wifiTemp = new ArrayList<>();
+        if (wifiDataChange(wifiData, scanResults, wifiDataLength)) {
+            runOnUiThread(() -> debugInfo.setText("\n\tNew data, classifying!"));
+//                debugInfo.setText("\n\tNew data, classifying!");
+            wifiDataLength = scanResults.size();
+            wifiData.clear();
+            for (ScanResult scanResult : scanResults) {
+                String[] wifi = new String[2];
+                wifi[0] = scanResult.BSSID;
+                wifi[1] = String.valueOf(scanResult.level);
+                wifiTemp.add(wifi);
+            }
+            wifiData.copyFrom(wifiTemp);
+
+            formatWifiData(wifiData);
+
+            try {
+                classify(wifiData, indexList, valueList);
+
+                runOnUiThread(() -> {
+                    switch (predict) {
+                        case 1:
+                            c1.setRating(10.0f);
+                            break;
+                        case 2:
+                            c2.setRating(10.0f);
+                            break;
+                        case 3:
+                            c3.setRating(10.0f);
+                            break;
+                        case 4:
+                            c4.setRating(10.0f);
+                            break;
+                        case 5:
+                            c5.setRating(10.0f);
+                            break;
+                        case 6:
+                            c6.setRating(10.0f);
+                            break;
+                        case 7:
+                            c7.setRating(10.0f);
+                            break;
+                        case 8:
+                            c8.setRating(10.0f);
+                            break;
+                        case 9:
+                            c9.setRating(10.0f);
+                            break;
+                        case 10:
+                            c10.setRating(10.0f);
+                            break;
+                        case 11:
+                            c11.setRating(10.0f);
+                            break;
+                        case 12:
+                            c12.setRating(10.0f);
+                            break;
+                        case 13:
+                            c13.setRating(10.0f);
+                            break;
+                        case 14:
+                            c14.setRating(10.0f);
+                            break;
+                        case 15:
+                            c15.setRating(10.0f);
+                            break;
+                        case 16:
+                            c16.setRating(10.0f);
+                            break;
+                        default:
+                }});
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            runOnUiThread(() -> debugInfo.setText("\n\tCell Number: " + predict));
+
+//                debugInfo.setText("\n\tDone!");
+        } else {
+            runOnUiThread(() -> debugInfo.setText("\n\tSame data, please scan again!"));
+//                debugInfo.setText("Same data, please scan again!");
+        }}).start();
+    }
+
+    private void classify(ArrayListLock wifiData, Map<String, int[]> indexList, Map<String, float[][]> valueList) throws Exception {
         float[] prior = new float[cellNum];
-        Arrays.fill(prior, (float) (1.0 /cellNum));
+        Arrays.fill(prior, (float) (1.0 / cellNum));
         for (int i = 0; i < wifiData.size(); i++) {
             String bssid = wifiData.get(i)[0];
             if (indexList.get(bssid) != null) {
 
                 float[][] table = valueList.get(bssid);
-                if (Integer.valueOf(wifiData.get(i)[1]) > indexList.get(bssid)[1]){
+                if (Integer.valueOf(wifiData.get(i)[1]) > indexList.get(bssid)[1]) {
                     wifiData.get(i)[1] = Integer.toString(indexList.get(bssid)[1]);
                 }
 
-                if (Integer.valueOf(wifiData.get(i)[1]) < indexList.get(bssid)[0]){
+                if (Integer.valueOf(wifiData.get(i)[1]) < indexList.get(bssid)[0]) {
                     wifiData.get(i)[1] = Integer.toString(indexList.get(bssid)[0]);
                 }
 
@@ -281,31 +242,29 @@ public class MainActivity extends Activity implements SensorEventListener {
                 float[] post = dotProduct(prob, prior);
 //                debugInfo.setText(Integer.toString(index) + "+" + Float.toString(prob[9]) + "+" + Float.toString(post[9]));
                 if (arraySum(post) != 0) {
-                    prior = arrayDivide(post,arraySum(post));
-                }
-                else {
+                    prior = arrayDivide(post, arraySum(post));
+                } else {
                     break;
                 }
 
-                if (findMax(prior)) {
-                    return true;
+                if (prior[findMax(prior)] > (float) 0.95) {
+                    predict = findMax(prior) + 1;
+                    break;
                 }
-            }
-            else {
-                //debugInfo.setText("Can not locate");
+
             }
         }
-        return false;
     }
 
-    private boolean findMax(float[] prior) {
+    private int findMax(float[] prior) {
+        int maxIndex = 0;
         for (int i = 0; i < prior.length; i++) {
-            if (prior[i] > 0.95 ) {
-                predict = i;
-                return true;
+            if (prior[i] > prior[maxIndex]) {
+                maxIndex = i;
             }
         }
-        return false;
+
+        return maxIndex;
     }
 
     private float arraySum(float[] post) {
@@ -328,7 +287,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         for (int i = 0; i < prob.length; i++) {
             result[i] = prob[i] * prior[i];
         }
-    return result;
+        return result;
     }
 
     private float[] extractCol(float[][] table, int index) {
@@ -339,9 +298,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         return columnValues;
     }
 
-
-    private void readRssiTables(ArrayList<String> bssidList, Map<String,int[]> indexList, Map<String,float[][]> valueList) throws IOException {
-        for (String bssid: bssidList) {
+    private void readRssiTables(ArrayList<String> bssidList, Map<String, int[]> indexList, Map<String, float[][]> valueList) throws IOException {
+        for (String bssid : bssidList) {
             String indexFileName = "rssi_table/" + bssid + "_index.csv";
             String valueFileName = "rssi_table/" + bssid + "_data.csv";
             int[] index = readFromIndexFile(indexFileName);
@@ -385,7 +343,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         int[] index = new int[2];
         int i = 0;
         while ((line = bufferedReader.readLine()) != null) {
-            index[i] =  Integer.parseInt(line);
+            index[i] = Integer.parseInt(line);
             i++;
         }
 
@@ -396,20 +354,19 @@ public class MainActivity extends Activity implements SensorEventListener {
         return index;
     }
 
-    private void formatWifiData(ArrayList<String[]> wifiData) {
-        for (int i = 0; i< wifiData.size(); i++) {
-            wifiData.get(i)[0] = wifiData.get(i)[0].substring(0, wifiData.get(i)[0].length()-3);
-            wifiData.get(i)[0] = wifiData.get(i)[0].replace(':','_');
+    private void formatWifiData(ArrayListLock wifiData) {
+        for (int i = 0; i < wifiData.size(); i++) {
+            wifiData.get(i)[0] = wifiData.get(i)[0].substring(0, wifiData.get(i)[0].length() - 3);
+            wifiData.get(i)[0] = wifiData.get(i)[0].replace(':', '_');
             wifiData.get(i)[1] = wifiData.get(i)[1].substring(1);
         }
     }
 
-    private boolean wifiDataChange(ArrayList<String[]> wifiData, List<ScanResult> scanResults, int wifiDataLength) {
+    private boolean wifiDataChange(ArrayListLock wifiData, List<ScanResult> scanResults, int wifiDataLength) {
         if (wifiDataLength != scanResults.size()) {
             return true;
-        }
-        else {
-            for (int i = 0; i < wifiDataLength; i ++ ) {
+        } else {
+            for (int i = 0; i < wifiDataLength; i++) {
                 if (Integer.parseInt(wifiData.get(i)[1]) != scanResults.get(i).level) {
                     return true;
                 }
@@ -428,48 +385,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
         for (String bssid : fileList) {
             if (bssid.contains("_data.csv")) {
-                bssidList.add(bssid.substring(0,bssid.length()-9));
+                bssidList.add(bssid.substring(0, bssid.length() - 9));
             }
         }
     }
 
-    // onResume() registers the accelerometer for listening the events
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(this, accelerometer,
-                SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    // onPause() unregisters the accelerometer for stop listening the events
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do nothing.
-    }
-
-//    @Override
-//    public void onSensorChanged(SensorEvent event) {
-//        // get the the x,y,z values of the accelerometer
-//        float aX = event.values[0];
-//        float aY = event.values[1];
-//        float aZ = event.values[2];
-//
-//        if (sampleNum < windowSize) {
-//            sensorData[sampleNum][0] = aX;
-//            sensorData[sampleNum][1] = aY;
-//            sensorData[sampleNum][2] = aZ;
-//
-//            sampleNum = sampleNum + 1;
-//        }
-//
-//    }
 }
