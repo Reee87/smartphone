@@ -38,8 +38,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * The wifi manager.
      */
     private WifiManager wifiManager;
-
-
     Button start;
 
     private TextView debugInfo;
@@ -54,11 +52,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     Map<String, int[]> indexList;
     Map<String, float[][]> valueList;
-    int wifiDataLength;
-
     int predict = 0;
-    String information;
-
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -75,8 +69,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         valueList = new HashMap<>();
 
         wifiData = new ArrayListLock();
-        wifiDataLength = 0;
-
 
         c1 = (RatingBar) findViewById(R.id.ratingBar1);
         c2 = (RatingBar) findViewById(R.id.ratingBar2);
@@ -114,111 +106,215 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        new Thread(() -> {
-            runOnUiThread(() -> debugInfo.setText("\n\tClick!"));
+//            runOnUiThread(() -> debugInfo.setText("\n\tClick!"));
 
-        c1.setRating(0.0f);
-        c2.setRating(0.0f);
-        c3.setRating(0.0f);
-        c4.setRating(0.0f);
-        c5.setRating(0.0f);
-        c6.setRating(0.0f);
-        c7.setRating(0.0f);
-        c8.setRating(0.0f);
-        c9.setRating(0.0f);
-        c10.setRating(0.0f);
-        c11.setRating(0.0f);
-        c12.setRating(0.0f);
-        c13.setRating(0.0f);
-        c14.setRating(0.0f);
-        c15.setRating(0.0f);
-        c16.setRating(0.0f);
+            c1.setRating(0.0f);
+            c2.setRating(0.0f);
+            c3.setRating(0.0f);
+            c4.setRating(0.0f);
+            c5.setRating(0.0f);
+            c6.setRating(0.0f);
+            c7.setRating(0.0f);
+            c8.setRating(0.0f);
+            c9.setRating(0.0f);
+            c10.setRating(0.0f);
+            c11.setRating(0.0f);
+            c12.setRating(0.0f);
+            c13.setRating(0.0f);
+            c14.setRating(0.0f);
+            c15.setRating(0.0f);
+            c16.setRating(0.0f);
 
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiManager.startScan();
-        List<ScanResult> scanResults = wifiManager.getScanResults();
-        ArrayList<String[]> wifiTemp = new ArrayList<>();
-        if (wifiDataChange(wifiData, scanResults, wifiDataLength)) {
+            wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            wifiManager.startScan();
+            List<ScanResult> scanResults = wifiManager.getScanResults();
+            ArrayList<String[]> wifiTemp = new ArrayList<>();
+
+//            runOnUiThread(() -> debugInfo.setText("\n\tcurrent: " + wifiData.size() +
+//                    "\n\tnew: " + scanResults.size()));
+
+            if (wifiDataChange(wifiData, scanResults)) {
             runOnUiThread(() -> debugInfo.setText("\n\tNew data, classifying!"));
-//                debugInfo.setText("\n\tNew data, classifying!");
-            wifiDataLength = scanResults.size();
-            wifiData.clear();
-            for (ScanResult scanResult : scanResults) {
-                String[] wifi = new String[2];
-                wifi[0] = scanResult.BSSID;
-                wifi[1] = String.valueOf(scanResult.level);
-                wifiTemp.add(wifi);
-            }
-            wifiData.copyFrom(wifiTemp);
+                wifiData.clear();
+                for (ScanResult scanResult : scanResults) {
+                    String[] wifi = new String[2];
+                    wifi[0] = scanResult.BSSID;
+                    wifi[1] = String.valueOf(scanResult.level);
+                    wifiTemp.add(wifi);
+                }
+                wifiData.copyFrom(wifiTemp);
 
-            formatWifiData(wifiData);
+                formatWifiData(wifiData);
 
-            try {
-                classify(wifiData, indexList, valueList);
+                try {
+                    classify(wifiData, indexList, valueList);
 
-                runOnUiThread(() -> {
-                    switch (predict) {
-                        case 1:
-                            c1.setRating(10.0f);
-                            break;
-                        case 2:
-                            c2.setRating(10.0f);
-                            break;
-                        case 3:
-                            c3.setRating(10.0f);
-                            break;
-                        case 4:
-                            c4.setRating(10.0f);
-                            break;
-                        case 5:
-                            c5.setRating(10.0f);
-                            break;
-                        case 6:
-                            c6.setRating(10.0f);
-                            break;
-                        case 7:
-                            c7.setRating(10.0f);
-                            break;
-                        case 8:
-                            c8.setRating(10.0f);
-                            break;
-                        case 9:
-                            c9.setRating(10.0f);
-                            break;
-                        case 10:
-                            c10.setRating(10.0f);
-                            break;
-                        case 11:
-                            c11.setRating(10.0f);
-                            break;
-                        case 12:
-                            c12.setRating(10.0f);
-                            break;
-                        case 13:
-                            c13.setRating(10.0f);
-                            break;
-                        case 14:
-                            c14.setRating(10.0f);
-                            break;
-                        case 15:
-                            c15.setRating(10.0f);
-                            break;
-                        case 16:
-                            c16.setRating(10.0f);
-                            break;
-                        default:
-                }});
+                    runOnUiThread(() -> {
+                        switch (predict) {
+                            case 1:
+                                c1.setRating(10.0f);
+                                break;
+                            case 2:
+                                c2.setRating(10.0f);
+                                break;
+                            case 3:
+                                c3.setRating(10.0f);
+                                break;
+                            case 4:
+                                c4.setRating(10.0f);
+                                break;
+                            case 5:
+                                c5.setRating(10.0f);
+                                break;
+                            case 6:
+                                c6.setRating(10.0f);
+                                break;
+                            case 7:
+                                c7.setRating(10.0f);
+                                break;
+                            case 8:
+                                c8.setRating(10.0f);
+                                break;
+                            case 9:
+                                c9.setRating(10.0f);
+                                break;
+                            case 10:
+                                c10.setRating(10.0f);
+                                break;
+                            case 11:
+                                c11.setRating(10.0f);
+                                break;
+                            case 12:
+                                c12.setRating(10.0f);
+                                break;
+                            case 13:
+                                c13.setRating(10.0f);
+                                break;
+                            case 14:
+                                c14.setRating(10.0f);
+                                break;
+                            case 15:
+                                c15.setRating(10.0f);
+                                break;
+                            case 16:
+                                c16.setRating(10.0f);
+                                break;
+                            default:
+                        }});
 
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            runOnUiThread(() -> debugInfo.setText("\n\tCell Number: " + predict));
-
-//                debugInfo.setText("\n\tDone!");
-        } else {
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+//            runOnUiThread(() -> debugInfo.setText("\n\tCell Number: " + predict));
+            } else {
             runOnUiThread(() -> debugInfo.setText("\n\tSame data, please scan again!"));
-//                debugInfo.setText("Same data, please scan again!");
-        }}).start();
+            }
+
+
+//        new Thread(() -> {
+////            runOnUiThread(() -> debugInfo.setText("\n\tClick!"));
+//
+//        c1.setRating(0.0f);
+//        c2.setRating(0.0f);
+//        c3.setRating(0.0f);
+//        c4.setRating(0.0f);
+//        c5.setRating(0.0f);
+//        c6.setRating(0.0f);
+//        c7.setRating(0.0f);
+//        c8.setRating(0.0f);
+//        c9.setRating(0.0f);
+//        c10.setRating(0.0f);
+//        c11.setRating(0.0f);
+//        c12.setRating(0.0f);
+//        c13.setRating(0.0f);
+//        c14.setRating(0.0f);
+//        c15.setRating(0.0f);
+//        c16.setRating(0.0f);
+//
+//        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        wifiManager.startScan();
+//        List<ScanResult> scanResults = wifiManager.getScanResults();
+//        ArrayList<String[]> wifiTemp = new ArrayList<>();
+//
+//        runOnUiThread(() -> debugInfo.setText("\n\tcurrent: " + wifiData.size() +
+//                "\n\tnew: " + scanResults.size()));
+//
+//        if (wifiDataChange(wifiData, scanResults)) {
+////            runOnUiThread(() -> debugInfo.setText("\n\tNew data, classifying!"));
+//            wifiData.clear();
+//            for (ScanResult scanResult : scanResults) {
+//                String[] wifi = new String[2];
+//                wifi[0] = scanResult.BSSID;
+//                wifi[1] = String.valueOf(scanResult.level);
+//                wifiTemp.add(wifi);
+//            }
+//            wifiData.copyFrom(wifiTemp);
+//
+//            formatWifiData(wifiData);
+//
+//            try {
+//                classify(wifiData, indexList, valueList);
+//
+//                runOnUiThread(() -> {
+//                    switch (predict) {
+//                        case 1:
+//                            c1.setRating(10.0f);
+//                            break;
+//                        case 2:
+//                            c2.setRating(10.0f);
+//                            break;
+//                        case 3:
+//                            c3.setRating(10.0f);
+//                            break;
+//                        case 4:
+//                            c4.setRating(10.0f);
+//                            break;
+//                        case 5:
+//                            c5.setRating(10.0f);
+//                            break;
+//                        case 6:
+//                            c6.setRating(10.0f);
+//                            break;
+//                        case 7:
+//                            c7.setRating(10.0f);
+//                            break;
+//                        case 8:
+//                            c8.setRating(10.0f);
+//                            break;
+//                        case 9:
+//                            c9.setRating(10.0f);
+//                            break;
+//                        case 10:
+//                            c10.setRating(10.0f);
+//                            break;
+//                        case 11:
+//                            c11.setRating(10.0f);
+//                            break;
+//                        case 12:
+//                            c12.setRating(10.0f);
+//                            break;
+//                        case 13:
+//                            c13.setRating(10.0f);
+//                            break;
+//                        case 14:
+//                            c14.setRating(10.0f);
+//                            break;
+//                        case 15:
+//                            c15.setRating(10.0f);
+//                            break;
+//                        case 16:
+//                            c16.setRating(10.0f);
+//                            break;
+//                        default:
+//                }});
+//
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+////            runOnUiThread(() -> debugInfo.setText("\n\tCell Number: " + predict));
+//        } else {
+////            runOnUiThread(() -> debugInfo.setText("\n\tSame data, please scan again!"));
+//        }}).start();
     }
 
     private void classify(ArrayListLock wifiData, Map<String, int[]> indexList, Map<String, float[][]> valueList) throws Exception {
@@ -362,16 +458,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private boolean wifiDataChange(ArrayListLock wifiData, List<ScanResult> scanResults, int wifiDataLength) {
-        if (wifiDataLength != scanResults.size()) {
+    private boolean wifiDataChange(ArrayListLock wifiData, List<ScanResult> scanResults) {
+        if (wifiData.size() != scanResults.size()) {
             return true;
-        } else {
-            for (int i = 0; i < wifiDataLength; i++) {
-                if (Integer.parseInt(wifiData.get(i)[1]) != scanResults.get(i).level) {
-                    return true;
-                }
-            }
         }
+//        else {
+//            for (int i = 0; i < wifiData.size(); i++) {
+//                if (Integer.parseInt(wifiData.get(i)[1]) != scanResults.get(i).level) {
+//                    return true;
+//                }
+//            }
+//        }
         return false;
     }
 
