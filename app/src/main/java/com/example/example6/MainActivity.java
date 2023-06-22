@@ -36,12 +36,12 @@ import java.util.List;
 /**
  * Smart Phone Sensing Example 6. Object movement and interaction on canvas.
  */
-public class MainActivity extends Activity implements OnClickListener, SensorEventListener  {
+public class MainActivity extends Activity implements SensorEventListener  {
 
     /**
      * The buttons.
      */
-    private Button up, left, right, down;
+//    private Button up, left, right, down;
     /**
      * The text view.
      */
@@ -105,10 +105,10 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         setContentView(R.layout.activity_main);
 
         // set the buttons
-        up = (Button) findViewById(R.id.button1);
-        left = (Button) findViewById(R.id.button2);
-        right = (Button) findViewById(R.id.button3);
-        down = (Button) findViewById(R.id.button4);
+//        up = (Button) findViewById(R.id.button1);
+//        left = (Button) findViewById(R.id.button2);
+//        right = (Button) findViewById(R.id.button3);
+//        down = (Button) findViewById(R.id.button4);
 
         // set the text view
         textStep = (TextView) findViewById(R.id.textView);
@@ -116,10 +116,10 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         textCellNum = (TextView) findViewById(R.id.cellNum);
 
         // set listeners
-        up.setOnClickListener(this);
-        down.setOnClickListener(this);
-        left.setOnClickListener(this);
-        right.setOnClickListener(this);
+//        up.setOnClickListener(this);
+//        down.setOnClickListener(this);
+//        left.setOnClickListener(this);
+//        right.setOnClickListener(this);
 
         // set step counter
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -221,7 +221,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         canvasView.setImageBitmap(blankBitmap);
 
         // draw the objects
-        drawable.draw(canvas);
+//        drawable.draw(canvas);
         for(ShapeDrawable wall : wallsInvisible) {
             wall.getPaint().setColor(Color.GRAY);
             wall.draw(canvas);
@@ -274,85 +274,85 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View v) {
-        // This happens when you click any of the four buttons.
-        // For each of the buttons, when it is clicked we change:
-        // - The text in the center of the buttons
-        // - The margins
-        // - The text that shows the margin
-        switch (v.getId()) {
-            // UP BUTTON
-            case R.id.button1: {
-                Rect r = drawable.getBounds();
-                drawable.setBounds(r.left,r.top-stepLength,r.right,r.bottom-stepLength);
-                particlesDrawable.move(stepLength, 90);
-
-                break;
-            }
-            // DOWN BUTTON
-            case R.id.button4: {
-                Rect r = drawable.getBounds();
-                drawable.setBounds(r.left,r.top+stepLength,r.right,r.bottom+stepLength);
-                particlesDrawable.move(stepLength, 270);
-
-                break;
-            }
-            // LEFT BUTTON
-            case R.id.button2: {
-                Rect r = drawable.getBounds();
-                drawable.setBounds(r.left-stepLength,r.top,r.right-stepLength,r.bottom);
-                particlesDrawable.move(stepLength, 180);
-
-                break;
-            }
-            // RIGHT BUTTON
-            case R.id.button3: {
-                Rect r = drawable.getBounds();
-                drawable.setBounds(r.left+stepLength,r.top,r.right+stepLength,r.bottom);
-                particlesDrawable.move(stepLength, 0);
-
-                break;
-            }
-        }
-        // if there is a collision between the dot and any of the walls
-        if(particlesDrawable.isCollision(drawable)) {
-            // reset dot to center of canvas
-            Display display = getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            int width = size.x;
-            int height = size.y;
-            drawable.setBounds(startX-dotSize/2, startY-dotSize/2, startX+dotSize/2, startY+dotSize/2);
-        }
-
-        particlesDrawable.checkCollision();
-        particlesDrawable.resample();
-        textCellNum.setText("\n\tcell number = " + particlesDrawable.checkCellNum());
-
-        // redrawing of the object
-        canvas.drawColor(Color.WHITE);
-        for(ShapeDrawable wall : wallsInvisible) {
-            wall.getPaint().setColor(Color.GRAY);
-            wall.draw(canvas);
-        }
-        for(ShapeDrawable wall : wallsNotBound) {
-            wall.getPaint().setColor(Color.BLUE);
-            wall.draw(canvas);
-        }
-        for(ShapeDrawable wall : wallsBound) {
-            wall.getPaint().setColor(Color.RED);
-            wall.draw(canvas);
-        }
-        for(Parallelogram p : parallelograms) {
-            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            p.draw(canvas, paint);
-        }
-        particlesDrawable.draw(canvas);
-        drawable.draw(canvas);
-
-    }
+//    @Override
+//    public void onClick(View v) {
+//        // This happens when you click any of the four buttons.
+//        // For each of the buttons, when it is clicked we change:
+//        // - The text in the center of the buttons
+//        // - The margins
+//        // - The text that shows the margin
+//        switch (v.getId()) {
+//            // UP BUTTON
+//            case R.id.button1: {
+//                Rect r = drawable.getBounds();
+//                drawable.setBounds(r.left,r.top-stepLength,r.right,r.bottom-stepLength);
+//                particlesDrawable.move(stepLength, 90);
+//
+//                break;
+//            }
+//            // DOWN BUTTON
+//            case R.id.button4: {
+//                Rect r = drawable.getBounds();
+//                drawable.setBounds(r.left,r.top+stepLength,r.right,r.bottom+stepLength);
+//                particlesDrawable.move(stepLength, 270);
+//
+//                break;
+//            }
+//            // LEFT BUTTON
+//            case R.id.button2: {
+//                Rect r = drawable.getBounds();
+//                drawable.setBounds(r.left-stepLength,r.top,r.right-stepLength,r.bottom);
+//                particlesDrawable.move(stepLength, 180);
+//
+//                break;
+//            }
+//            // RIGHT BUTTON
+//            case R.id.button3: {
+//                Rect r = drawable.getBounds();
+//                drawable.setBounds(r.left+stepLength,r.top,r.right+stepLength,r.bottom);
+//                particlesDrawable.move(stepLength, 0);
+//
+//                break;
+//            }
+//        }
+//        // if there is a collision between the dot and any of the walls
+//        if(particlesDrawable.isCollision(drawable)) {
+//            // reset dot to center of canvas
+//            Display display = getWindowManager().getDefaultDisplay();
+//            Point size = new Point();
+//            display.getSize(size);
+//            int width = size.x;
+//            int height = size.y;
+//            drawable.setBounds(startX-dotSize/2, startY-dotSize/2, startX+dotSize/2, startY+dotSize/2);
+//        }
+//
+//        particlesDrawable.checkCollision();
+//        particlesDrawable.resample();
+//        textCellNum.setText("\n\tcell number = " + particlesDrawable.checkCellNum());
+//
+//        // redrawing of the object
+//        canvas.drawColor(Color.WHITE);
+//        for(ShapeDrawable wall : wallsInvisible) {
+//            wall.getPaint().setColor(Color.GRAY);
+//            wall.draw(canvas);
+//        }
+//        for(ShapeDrawable wall : wallsNotBound) {
+//            wall.getPaint().setColor(Color.BLUE);
+//            wall.draw(canvas);
+//        }
+//        for(ShapeDrawable wall : wallsBound) {
+//            wall.getPaint().setColor(Color.RED);
+//            wall.draw(canvas);
+//        }
+//        for(Parallelogram p : parallelograms) {
+//            Paint paint = new Paint();
+//            paint.setColor(Color.RED);
+//            p.draw(canvas, paint);
+//        }
+//        particlesDrawable.draw(canvas);
+//        drawable.draw(canvas);
+//
+//    }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -473,7 +473,7 @@ public class MainActivity extends Activity implements OnClickListener, SensorEve
             p.draw(canvas, paint);
         }
         particlesDrawable.draw(canvas);
-        drawable.draw(canvas);
+//        drawable.draw(canvas);
     }
 
     private float[] readFromValueFile(String fileName) throws IOException {
