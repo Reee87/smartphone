@@ -125,8 +125,8 @@ public class Particles {
 
     private int[] updateCoordinates(int distance, int direction) {
         int[] delta = new int[2];
-        distance += (int) (random.nextGaussian() * coefficient * 0.6 * 0.1);
-        direction += (int) (random.nextGaussian() * 45);
+        distance += (int) (random.nextGaussian() * coefficient * 0.7 * 0.1);
+        direction += (int) (random.nextGaussian() * 30);
         double radians = Math.toRadians(direction);
         double sinValue = Math.sin(radians);
         double cosValue = Math.cos(radians);

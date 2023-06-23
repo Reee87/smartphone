@@ -274,100 +274,8 @@ public class MainActivity extends Activity implements SensorEventListener  {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        // This happens when you click any of the four buttons.
-//        // For each of the buttons, when it is clicked we change:
-//        // - The text in the center of the buttons
-//        // - The margins
-//        // - The text that shows the margin
-//        switch (v.getId()) {
-//            // UP BUTTON
-//            case R.id.button1: {
-//                Rect r = drawable.getBounds();
-//                drawable.setBounds(r.left,r.top-stepLength,r.right,r.bottom-stepLength);
-//                particlesDrawable.move(stepLength, 90);
-//
-//                break;
-//            }
-//            // DOWN BUTTON
-//            case R.id.button4: {
-//                Rect r = drawable.getBounds();
-//                drawable.setBounds(r.left,r.top+stepLength,r.right,r.bottom+stepLength);
-//                particlesDrawable.move(stepLength, 270);
-//
-//                break;
-//            }
-//            // LEFT BUTTON
-//            case R.id.button2: {
-//                Rect r = drawable.getBounds();
-//                drawable.setBounds(r.left-stepLength,r.top,r.right-stepLength,r.bottom);
-//                particlesDrawable.move(stepLength, 180);
-//
-//                break;
-//            }
-//            // RIGHT BUTTON
-//            case R.id.button3: {
-//                Rect r = drawable.getBounds();
-//                drawable.setBounds(r.left+stepLength,r.top,r.right+stepLength,r.bottom);
-//                particlesDrawable.move(stepLength, 0);
-//
-//                break;
-//            }
-//        }
-//        // if there is a collision between the dot and any of the walls
-//        if(particlesDrawable.isCollision(drawable)) {
-//            // reset dot to center of canvas
-//            Display display = getWindowManager().getDefaultDisplay();
-//            Point size = new Point();
-//            display.getSize(size);
-//            int width = size.x;
-//            int height = size.y;
-//            drawable.setBounds(startX-dotSize/2, startY-dotSize/2, startX+dotSize/2, startY+dotSize/2);
-//        }
-//
-//        particlesDrawable.checkCollision();
-//        particlesDrawable.resample();
-//        textCellNum.setText("\n\tcell number = " + particlesDrawable.checkCellNum());
-//
-//        // redrawing of the object
-//        canvas.drawColor(Color.WHITE);
-//        for(ShapeDrawable wall : wallsInvisible) {
-//            wall.getPaint().setColor(Color.GRAY);
-//            wall.draw(canvas);
-//        }
-//        for(ShapeDrawable wall : wallsNotBound) {
-//            wall.getPaint().setColor(Color.BLUE);
-//            wall.draw(canvas);
-//        }
-//        for(ShapeDrawable wall : wallsBound) {
-//            wall.getPaint().setColor(Color.RED);
-//            wall.draw(canvas);
-//        }
-//        for(Parallelogram p : parallelograms) {
-//            Paint paint = new Paint();
-//            paint.setColor(Color.RED);
-//            p.draw(canvas, paint);
-//        }
-//        particlesDrawable.draw(canvas);
-//        drawable.draw(canvas);
-//
-//    }
-
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-//        if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-//            float stepCount = sensorEvent.values[0];
-//            textStep.setText("\n\tStep Counter: " + (int) stepCount);
-//
-//            if (!isInitialized) {
-//                isInitialized = true;
-//            } else {
-//                moveParticles(stepLength, (int) azimuth);
-//            }
-//
-//            azimuth = 0;
-//        }
 
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorEvent.values);
@@ -383,12 +291,10 @@ public class MainActivity extends Activity implements SensorEventListener  {
             float pitchDegrees = (float) Math.toDegrees(orientationAngles[1]);
             float rollDegrees = (float) Math.toDegrees(orientationAngles[2]);
 
-//            if (azimuth == 0) {
-//                azimuth = azimuthDegrees;
-//            } else {
-//                azimuth += azimuthDegrees;
-//                azimuth /= 2;
-//            }
+            if (direction.size() > 30) {
+                direction.clear();
+            }
+
             direction.addItem(azimuthDegrees);
 
             textRotation.setText(
