@@ -205,7 +205,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-//            runOnUiThread(() -> debugInfo.setText("\n\tCell Number: " + predict));
+            runOnUiThread(() -> debugInfo.setText("\n\tCell Number: " + predict));
             } else {
             runOnUiThread(() -> debugInfo.setText("\n\tSame data, please scan again!"));
             }
